@@ -20,14 +20,18 @@ class MoveableEntity(Entity):
 
 
 class Player(MoveableEntity):
+    SPEED = 7
+
     def __init__(self, pos, groups):
         sprite_sheet = [pg.image.load("images/BlackSprite/blackSprite_0.png"),
                         pg.image.load("images/BlackSprite/blackSprite_1.png"),
                         pg.image.load("images/BlackSprite/blackSprite_2.png"),
                         pg.image.load("images/BlackSprite/blackSprite_3.png")]
+
         super(Player, self).__init__(sprite_sheet, pos, groups)
         self.anm_index = 0
         self.sprite_sheet = sprite_sheet
+        self.velocity = pg.math.Vector2()
 
     def animation(self):
         self.anm_index += self.delta_time / 130
@@ -35,6 +39,16 @@ class Player(MoveableEntity):
             self.anm_index = 0
         self.scale_up(self.sprite_sheet, int(self.anm_index))
 
+    def move(self):
+        keys = pg.key.get_pressed()
+        self.velocity = pg.math.Vector2()
+        if keys[pg.K_LEFT]:
+            self.velocity.x = -Player.SPEED
+        if keys[pg.K_RIGHT]:
+            self.velocity.x = Player.SPEED
+        self.rect.topleft += self.velocity * (self.delta_time / ((1 / FPS) * SECOND))
+
     def update(self, delta_time):
         self.delta_time = delta_time
+        self.move()
         self.animation()

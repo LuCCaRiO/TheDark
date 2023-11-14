@@ -1,6 +1,7 @@
 import pygame as pg
 from Entity import Player
 from settings import *
+import time
 
 
 class Game:
@@ -9,7 +10,7 @@ class Game:
 
         self.render_entities = pg.sprite.Group()
 
-        Player((0, 0), [self.render_entities])
+        self.player = Player((0, 0), [self.render_entities])
 
     def run(self):
         clock = pg.time.Clock()
