@@ -1,6 +1,5 @@
 import pygame as pg
-from entity import Player
-from camera import Camera
+from map import Map
 from settings import *
 import time
 
@@ -9,21 +8,16 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((1920, 1080), pg.FULLSCREEN)
 
-        self.render_entities = Camera()
-
-        self.player = Player((0, 0), [self.render_entities])
+        self.map = Map()
 
     def run(self):
         clock = pg.time.Clock()
         while True:
             delta_time = clock.tick(FPS)
-
             self.handle_events()
 
-            self.render_entities.update(delta_time)
-
             self.screen.fill((100, 100, 100))
-            self.render_entities.render()
+            self.map.update(delta_time)
 
             pg.display.update()
 
