@@ -35,7 +35,7 @@ class Player(MoveableEntity):
 
     def animation(self):
         self.anm_index += self.delta_time / 130
-        if self.anm_index >= len(self.sprite_sheet):
+        if self.anm_index >= len(self.sprite_sheet) or self.velocity == pg.math.Vector2():
             self.anm_index = 0
         self.scale_up(self.sprite_sheet, int(self.anm_index))
 

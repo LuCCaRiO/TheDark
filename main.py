@@ -1,5 +1,6 @@
 import pygame as pg
-from Entity import Player
+from entity import Player
+from camera import Camera
 from settings import *
 import time
 
@@ -8,7 +9,7 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((1920, 1080), pg.FULLSCREEN)
 
-        self.render_entities = pg.sprite.Group()
+        self.render_entities = Camera()
 
         self.player = Player((0, 0), [self.render_entities])
 
@@ -22,10 +23,9 @@ class Game:
             self.render_entities.update(delta_time)
 
             self.screen.fill((100, 100, 100))
-            self.render_entities.draw(self.screen)
+            self.render_entities.render()
 
             pg.display.update()
-
 
     def handle_events(self):
         for event in pg.event.get():
