@@ -11,7 +11,7 @@ class Game:
         screen_width, screen_height = self.screen.get_size()
 
 
-        self.black = pg.transform.scale(pg.image.load("images/black.png"), (screen_width, screen_height))
+        self.black = pg.transform.scale(pg.image.load("images/black.png"), (screen_width * 2, screen_height * 2))
 
         self.map = Map()
 
@@ -23,7 +23,7 @@ class Game:
 
             self.screen.fill((100, 100, 100))
             self.map.update(delta_time)
-            self.screen.blit(self.black, (0, 0))
+            self.screen.blit(self.black, (self.screen.get_width() // -2, self.screen.get_height() // -2))
 
             pg.display.update()
 

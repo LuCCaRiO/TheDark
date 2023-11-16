@@ -11,6 +11,10 @@ class Map:
     def __init__(self):
         self.rendered_entities = Camera()
         self.collidable_entities = pg.sprite.Group()
+        self.danger_entities = pg.sprite.Group()
+        self.collision = {"ground": self.collidable_entities,
+                          "danger": self.danger_entities}
+
         self.player = None
 
         self.create_level(self.read_csv("levels/level_1.csv"))
@@ -30,8 +34,11 @@ class Map:
                 if str.isnumeric(element):
                     Tile([pg.image.load(f"images/Tiles/tiles{element}.png")],
                          (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.collidable_entities])
+                elif element == "d":
+                    Tile([pg.image.load(f"images/Tiles/tiles1.png")],
+                         (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.danger_entities])
                 elif element == "p":
-                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collidable_entities)
+                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision)
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)

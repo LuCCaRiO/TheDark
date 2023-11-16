@@ -26,6 +26,7 @@ class Player(MoveableEntity):
     SPEED = 10
     GRAVITY = 0.7
     JUMP_FORCE = -13
+    DEATH_HEIGHT = 1200
 
     def __init__(self, pos, groups, collidable_sprites):
         sprite_sheet = {"run": [pg.image.load("images/BlackSprite/blackSprite_0.png"),
@@ -35,6 +36,7 @@ class Player(MoveableEntity):
                         "fall": [pg.image.load("images/BlackSprite/falling.png")]}
 
         super(Player, self).__init__(sprite_sheet["run"], pos, groups)
+        self.start_pos = pg.math.Vector2(pos)
         self.anm_index = 0
         self.sprite_sheet = sprite_sheet
 
@@ -83,17 +85,17 @@ class Player(MoveableEntity):
         self.hitbox.centerx = round(self.pos.x)
         self.rect.centerx = self.hitbox.centerx
 
-        self.collision(HORIZONTAL)
+        self.ground_collision(HORIZONTAL)
 
         self.pos.y += self.direction.y * (self.delta_time / RELATION_DELTA_TIME)
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
 
         self.on_ground = False
-        self.collision(VERTICAL)
+        self.ground_collision(VERTICAL)
 
-    def collision(self, direction):
-        for sprite in self.collidable_sprites:
+    def ground_collision(self, direction):
+        for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.hitbox):
                 if direction == HORIZONTAL:
                     if self.direction.x > 0:
@@ -113,13 +115,25 @@ class Player(MoveableEntity):
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
 
+    def danger_collision(self):
+        for sprite in self.collidable_sprites["danger"]:
+            sprite_mask = pg.mask.from_surface(sprite.image)
+            mask = pg.mask.from_surface(self.image)
+            if sprite_mask.overlap(mask, (self.pos.x - sprite.pos.x, self.pos.y - sprite.pos.y)):
+                self.restart()
 
+    def restart(self):
+        self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
 
     def update(self, delta_time):
+        if self.pos.y > Player.DEATH_HEIGHT:
+            self.restart()
+
         self.delta_time = delta_time
         self.input()
         self.gravity()
         self.move()
+        self.danger_collision()
         self.animation()
 
 
