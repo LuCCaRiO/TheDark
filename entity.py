@@ -24,16 +24,17 @@ class MoveableEntity(Entity):
 
 class Player(MoveableEntity):
     SPEED = 10
-    GRAVITY = 0.2
-    JUMP_FORCE = -2.3
+    GRAVITY = 0.7
+    JUMP_FORCE = -13
 
     def __init__(self, pos, groups, collidable_sprites):
-        sprite_sheet = [pg.image.load("images/BlackSprite/blackSprite_0.png"),
+        sprite_sheet = {"run": [pg.image.load("images/BlackSprite/blackSprite_0.png"),
                         pg.image.load("images/BlackSprite/blackSprite_1.png"),
                         pg.image.load("images/BlackSprite/blackSprite_2.png"),
-                        pg.image.load("images/BlackSprite/blackSprite_3.png")]
+                        pg.image.load("images/BlackSprite/blackSprite_3.png")],
+                        "fall": [pg.image.load("images/BlackSprite/falling.png")]}
 
-        super(Player, self).__init__(sprite_sheet, pos, groups)
+        super(Player, self).__init__(sprite_sheet["run"], pos, groups)
         self.anm_index = 0
         self.sprite_sheet = sprite_sheet
 
@@ -47,9 +48,14 @@ class Player(MoveableEntity):
 
     def animation(self):
         self.anm_index += self.delta_time / 130
-        if self.anm_index >= len(self.sprite_sheet) or self.direction.x == 0:
+
+        if self.anm_index >= len(self.sprite_sheet["run"]) or self.direction.x == 0:
             self.anm_index = 0
-        self.scale_up(self.sprite_sheet, int(self.anm_index), TILE_SIZE / 8)
+        self.scale_up(self.sprite_sheet["run"], int(self.anm_index), TILE_SIZE / 8)
+
+        if not self.on_ground:
+            self.scale_up(self.sprite_sheet["fall"], 0, TILE_SIZE / 8)
+            self.anm_index = 0
 
         if self.direction.x < 0 or self.flipped:
             self.image = pg.transform.flip(self.image, True, False)
@@ -79,7 +85,7 @@ class Player(MoveableEntity):
 
         self.collision(HORIZONTAL)
 
-        self.pos.y += self.direction.y * Player.SPEED * (self.delta_time / RELATION_DELTA_TIME)
+        self.pos.y += self.direction.y * (self.delta_time / RELATION_DELTA_TIME)
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
 

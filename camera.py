@@ -1,3 +1,5 @@
+import random
+
 import pygame as pg
 
 
