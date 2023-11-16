@@ -9,7 +9,8 @@ from entity import Tile, Player
 
 class Map:
     def __init__(self):
-        self.render_entities = Camera()
+        self.rendered_entities = Camera()
+        self.collidable_entities = pg.sprite.Group()
         self.player = None
 
         self.create_level(self.read_csv("levels/level_1.csv"))
@@ -28,13 +29,11 @@ class Map:
             for j, element in enumerate(row):
                 if str.isnumeric(element):
                     Tile([pg.image.load(f"images/Tiles/tiles{element}.png")],
-                         (j * TILE_SIZE, i * TILE_SIZE), [self.render_entities])
+                         (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.collidable_entities])
                 elif element == "p":
-                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.render_entities])
-                    print("gugu gaga")
-
+                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collidable_entities)
 
     def update(self, delta_time):
-        self.render_entities.update(delta_time)
+        self.rendered_entities.update(delta_time)
         print(self.player)
-        self.render_entities.render(self.player)
+        self.rendered_entities.render(self.player)
