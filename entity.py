@@ -113,6 +113,8 @@ class Player(MoveableEntity):
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
 
+
+
     def update(self, delta_time):
         self.delta_time = delta_time
         self.input()

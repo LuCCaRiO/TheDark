@@ -8,6 +8,11 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((1920, 1080), pg.FULLSCREEN)
 
+        screen_width, screen_height = self.screen.get_size()
+
+
+        self.black = pg.transform.scale(pg.image.load("images/black.png"), (screen_width, screen_height))
+
         self.map = Map()
 
     def run(self):
@@ -18,6 +23,7 @@ class Game:
 
             self.screen.fill((100, 100, 100))
             self.map.update(delta_time)
+            self.screen.blit(self.black, (0, 0))
 
             pg.display.update()
 
