@@ -23,9 +23,9 @@ class MoveableEntity(Entity):
 
 
 class Player(MoveableEntity):
-    SPEED = 7
-    GRAVITY = 0.5
-    JUMP_FORCE = -4
+    SPEED = 10
+    GRAVITY = 0.2
+    JUMP_FORCE = -2.3
 
     def __init__(self, pos, groups, collidable_sprites):
         sprite_sheet = [pg.image.load("images/BlackSprite/blackSprite_0.png"),
@@ -38,6 +38,7 @@ class Player(MoveableEntity):
         self.sprite_sheet = sprite_sheet
 
         self.direction = pg.math.Vector2()
+        self.flipped = False
         self.hitbox = self.rect.inflate(-10, 0)
 
         self.on_ground = False
@@ -49,6 +50,12 @@ class Player(MoveableEntity):
         if self.anm_index >= len(self.sprite_sheet) or self.direction.x == 0:
             self.anm_index = 0
         self.scale_up(self.sprite_sheet, int(self.anm_index), TILE_SIZE / 8)
+
+        if self.direction.x < 0 or self.flipped:
+            self.image = pg.transform.flip(self.image, True, False)
+            self.flipped = True
+        if self.direction.x > 0:
+            self.flipped = False
 
     def input(self):
         keys = pg.key.get_pressed()
