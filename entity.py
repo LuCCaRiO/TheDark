@@ -3,22 +3,23 @@ from settings import *
 
 
 class Entity(pg.sprite.Sprite):
-    def __init__(self, anm, pos, groups):
+    def __init__(self, anm, pos, groups, scale_multiply=TILE_SIZE/8):
         super(Entity, self).__init__(groups)
         print(pos)
-        self.scale_up(anm, 0, TILE_SIZE / 8)
+        self.image = Entity.scale_up(anm, 0, scale_multiply)
         self.rect = self.image.get_rect(topleft=pos)
         self.pos = pg.math.Vector2(self.rect.center)
 
-    def scale_up(self, anm, index, scale_multiply):
-        self.image = pg.transform.scale(anm[index],
+    @staticmethod
+    def scale_up(anm, index, scale_multiply):
+        return pg.transform.scale(anm[index],
                                         (anm[index].get_width() * scale_multiply,
                                          anm[index].get_height() * scale_multiply))
 
 
 class MoveableEntity(Entity):
-    def __init__(self, anm, pos, groups):
-        super(MoveableEntity, self).__init__(anm, pos, groups)
+    def __init__(self, anm, pos, groups, scale_multiply=TILE_SIZE/8):
+        super(MoveableEntity, self).__init__(anm, pos, groups, scale_multiply)
         self.delta_time = 1 / FPS
 
 
@@ -53,11 +54,10 @@ class Player(MoveableEntity):
 
         if self.anm_index >= len(self.sprite_sheet["run"]) or self.direction.x == 0:
             self.anm_index = 0
-        self.scale_up(self.sprite_sheet["run"], int(self.anm_index), TILE_SIZE / 8)
 
+        self.image = Player.scale_up(self.sprite_sheet["run"], int(self.anm_index), TILE_SIZE / 8)
         if not self.on_ground:
-            self.scale_up(self.sprite_sheet["fall"], 0, TILE_SIZE / 8)
-            self.anm_index = 0
+            self.image = Player.scale_up(self.sprite_sheet["fall"], 0, TILE_SIZE / 8)
 
         if self.direction.x < 0 or self.flipped:
             self.image = pg.transform.flip(self.image, True, False)
@@ -91,10 +91,10 @@ class Player(MoveableEntity):
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
 
-        self.on_ground = False
         self.ground_collision(VERTICAL)
 
     def ground_collision(self, direction):
+        self.on_ground = False
         for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.hitbox):
                 if direction == HORIZONTAL:
@@ -115,6 +115,7 @@ class Player(MoveableEntity):
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
 
+
     def danger_collision(self):
         for sprite in self.collidable_sprites["danger"]:
             sprite_mask = pg.mask.from_surface(sprite.image)
@@ -129,14 +130,20 @@ class Player(MoveableEntity):
         if self.pos.y > Player.DEATH_HEIGHT:
             self.restart()
 
+
         self.delta_time = delta_time
         self.input()
         self.gravity()
         self.move()
-        self.danger_collision()
         self.animation()
+        self.danger_collision()
 
 
 class Tile(Entity):
     def __init__(self, img, pos, groups):
         super(Tile, self).__init__(img, pos, groups)
+
+
+class UI(Entity):
+    def __init__(self, anm, pos, groups, scale_multiply=TILE_SIZE/8):
+        super(UI, self).__init__(anm, pos, groups, scale_multiply)

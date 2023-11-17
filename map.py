@@ -10,6 +10,7 @@ from entity import Tile, Player
 class Map:
     def __init__(self):
         self.rendered_entities = Camera()
+        self.user_interface = pg.sprite.Group()
         self.collidable_entities = pg.sprite.Group()
         self.danger_entities = pg.sprite.Group()
         self.collision = {"ground": self.collidable_entities,
