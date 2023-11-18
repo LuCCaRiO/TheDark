@@ -5,7 +5,6 @@ from settings import *
 class Entity(pg.sprite.Sprite):
     def __init__(self, anm, pos, groups, scale_multiply=TILE_SIZE/8):
         super(Entity, self).__init__(groups)
-        print(pos)
         self.image = Entity.scale_up(anm, 0, scale_multiply)
         self.rect = self.image.get_rect(topleft=pos)
         self.pos = pg.math.Vector2(self.rect.center)
@@ -45,18 +44,21 @@ class Player(MoveableEntity):
         self.flipped = False
         self.hitbox = self.rect.inflate(-10, 0)
 
+        self.rectangle = pg.Rect((0, 0, 0, 0))
+
         self.on_ground = False
 
         self.collidable_sprites = collidable_sprites
 
     def animation(self):
-        self.anm_index += self.delta_time / 130
+        self.anm_index += self.delta_time * 0.008
 
         if self.anm_index >= len(self.sprite_sheet["run"]) or self.direction.x == 0:
             self.anm_index = 0
 
-        self.image = Player.scale_up(self.sprite_sheet["run"], int(self.anm_index), TILE_SIZE / 8)
-        if not self.on_ground:
+        if self.on_ground:
+            self.image = Player.scale_up(self.sprite_sheet["run"], int(self.anm_index), TILE_SIZE / 8)
+        else:
             self.image = Player.scale_up(self.sprite_sheet["fall"], 0, TILE_SIZE / 8)
 
         if self.direction.x < 0 or self.flipped:
@@ -93,8 +95,13 @@ class Player(MoveableEntity):
 
         self.ground_collision(VERTICAL)
 
-    def ground_collision(self, direction):
+    def detect_ground(self):
         self.on_ground = False
+        for sprite in self.collidable_sprites["ground"]:
+            if sprite.rect.top == self.rect.bottom:
+                self.on_ground = True
+
+    def ground_collision(self, direction):
         for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.hitbox):
                 if direction == HORIZONTAL:
@@ -106,15 +113,15 @@ class Player(MoveableEntity):
                     self.pos.x = self.hitbox.centerx
 
                 elif direction == VERTICAL:
+
                     if self.direction.y > 0:
                         self.hitbox.bottom = sprite.rect.top
-                        self.on_ground = True
                     elif self.direction.y < 0:
                         self.hitbox.top = sprite.rect.bottom
+
                     self.direction.y = 0
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
-
 
     def danger_collision(self):
         for sprite in self.collidable_sprites["danger"]:
@@ -130,11 +137,11 @@ class Player(MoveableEntity):
         if self.pos.y > Player.DEATH_HEIGHT:
             self.restart()
 
-
         self.delta_time = delta_time
         self.input()
         self.gravity()
         self.move()
+        self.detect_ground()
         self.animation()
         self.danger_collision()
 

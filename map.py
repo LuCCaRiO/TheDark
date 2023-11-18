@@ -43,5 +43,5 @@ class Map:
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)
-        print(self.player)
         self.rendered_entities.render(self.player)
+        pg.draw.rect(pg.display.get_surface(), (255, 255, 255), self.player.rectangle)
