@@ -9,7 +9,6 @@ class Camera(pg.sprite.Group):
         self.offset = pg.math.Vector2()
 
     def render(self, player):
-        print(player.rect.topleft)
         if player is not None:
             self.offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
             self.offset.y = pg.display.get_surface().get_height() // 3

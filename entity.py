@@ -98,8 +98,10 @@ class Player(MoveableEntity):
     def detect_ground(self):
         self.on_ground = False
         for sprite in self.collidable_sprites["ground"]:
-            if sprite.rect.top == self.rect.bottom:
-                self.on_ground = True
+            if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 10:
+                print(abs(sprite.pos.x - self.pos.x))
+                if sprite.rect.top == self.rect.bottom:
+                    self.on_ground = True
 
     def ground_collision(self, direction):
         for sprite in self.collidable_sprites["ground"]:
@@ -138,10 +140,10 @@ class Player(MoveableEntity):
             self.restart()
 
         self.delta_time = delta_time
+        self.detect_ground()
         self.input()
         self.gravity()
         self.move()
-        self.detect_ground()
         self.animation()
         self.danger_collision()
 
@@ -149,8 +151,3 @@ class Player(MoveableEntity):
 class Tile(Entity):
     def __init__(self, img, pos, groups):
         super(Tile, self).__init__(img, pos, groups)
-
-
-class UI(Entity):
-    def __init__(self, anm, pos, groups, scale_multiply=TILE_SIZE/8):
-        super(UI, self).__init__(anm, pos, groups, scale_multiply)

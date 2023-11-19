@@ -1,18 +1,20 @@
 import pygame as pg
 from map import Map
 from settings import *
-from entity import UI
-from health_bar import HealthBar
+from user_interface import Light, HealthBar
 
 
 class Game:
     def __init__(self):
-        self.screen = pg.display.set_mode((1920, 1080), pg.FULLSCREEN)
+        monitor_size = pg.display.Info()
+        self.screen = pg.display.set_mode((monitor_size.current_w, monitor_size.current_h), pg.FULLSCREEN)
+
+        self.map = Map()
+
+        self.health_bar = None
 
         self.user_interface = pg.sprite.Group()
         self.create_ui()
-
-        self.map = Map()
 
     def run(self):
         clock = pg.time.Clock()
@@ -37,11 +39,11 @@ class Game:
         screen_width, screen_height = self.screen.get_size()
 
         black_image = pg.image.load("images/black.png")
-        image_width, image_height = black_image.get_size()
-        UI([black_image], (0, -130), [self.user_interface], screen_width / image_width)
+        Light((0, -130), [self.user_interface], self.map.player)
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])
 
 
 if __name__ == "__main__":
+    pg.init()
     Game().run()

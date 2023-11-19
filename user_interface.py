@@ -1,6 +1,11 @@
 import pygame as pg
-from entity import UI
+from entity import Entity
 from settings import *
+
+
+class UI(Entity):
+    def __init__(self, anm, pos, groups, scale_multiply=TILE_SIZE/8):
+        super(UI, self).__init__(anm, pos, groups, scale_multiply)
 
 
 class HealthBar(UI):
@@ -12,6 +17,7 @@ class HealthBar(UI):
         health_bar.blit(HealthBar.BAR_IMAGE, (0, 0))
         super(HealthBar, self).__init__([health_bar], pos, groups)
         self.current_health = 0
+        self.set_health(0)
         self.draw_health()
 
     def draw_health(self):
@@ -31,3 +37,20 @@ class HealthBar(UI):
 
     def update(self):
         self.draw_health()
+
+
+class Light(UI):
+    LIGHT_IMAGE = pg.image.load("images/black.png")
+
+    def __init__(self, pos, groups, player):
+        screen_width = pg.display.get_surface().get_width()
+        image_width = Light.LIGHT_IMAGE.get_width()
+        super(Light, self).__init__([Light.LIGHT_IMAGE], pos, groups, screen_width / image_width)
+        self.player = player
+
+    def move(self):
+        self.pos.y = self.player.pos.y - pg.display.get_surface().get_height()
+        self.rect.y = round(self.pos.y)
+
+    def update(self):
+        self.move()
