@@ -13,7 +13,7 @@ class Entity(pg.sprite.Sprite):
     def scale_up(anm, index, scale_multiply):
         return pg.transform.scale(anm[index],
                                         (anm[index].get_width() * scale_multiply,
-                                         anm[index].get_height() * scale_multiply))
+                                         anm[index].get_height() * scale_multiply)).convert_alpha()
 
 
 class MoveableEntity(Entity):
@@ -99,7 +99,6 @@ class Player(MoveableEntity):
         self.on_ground = False
         for sprite in self.collidable_sprites["ground"]:
             if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 10:
-                print(abs(sprite.pos.x - self.pos.x))
                 if sprite.rect.top == self.rect.bottom:
                     self.on_ground = True
 

@@ -1,7 +1,7 @@
 import pygame as pg
 from map import Map
 from settings import *
-from user_interface import Light, HealthBar
+from user_interface import Light, HealthBar, UI
 
 
 class Game:
@@ -24,9 +24,10 @@ class Game:
 
             self.screen.fill((100, 100, 100))
             self.map.update(delta_time)
-            self.user_interface.update()
+            self.user_interface.update(delta_time)
             self.user_interface.draw(self.screen)
             self.health_bar.set_health(self.health_bar.current_health + (delta_time / SECOND) * 10)
+
             pg.display.update()
 
     def handle_events(self):
@@ -38,8 +39,10 @@ class Game:
     def create_ui(self):
         screen_width, screen_height = self.screen.get_size()
 
-        black_image = pg.image.load("images/black.png")
-        Light((0, -130), [self.user_interface], self.map.player)
+        Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
+        dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
+        dark.fill((0, 0, 0, 200))
+        UI([dark], (0, 0), [self.user_interface])
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])
 
