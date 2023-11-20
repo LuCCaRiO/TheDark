@@ -27,6 +27,7 @@ class Player(MoveableEntity):
     GRAVITY = 0.7
     JUMP_FORCE = -13
     DEATH_HEIGHT = 1200
+    KNOCKBACK = 80
 
     def __init__(self, pos, groups, collidable_sprites):
         sprite_sheet = {"run": [pg.image.load("images/BlackSprite/blackSprite_0.png"),
@@ -43,12 +44,11 @@ class Player(MoveableEntity):
         self.direction = pg.math.Vector2()
         self.flipped = False
         self.hitbox = self.rect.inflate(-10, 0)
-
-        self.rectangle = pg.Rect((0, 0, 0, 0))
-
         self.on_ground = False
 
         self.collidable_sprites = collidable_sprites
+
+        self.health = 100
 
     def animation(self):
         self.anm_index += self.delta_time * 0.008
@@ -98,7 +98,7 @@ class Player(MoveableEntity):
     def detect_ground(self):
         self.on_ground = False
         for sprite in self.collidable_sprites["ground"]:
-            if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 10:
+            if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 9:
                 if sprite.rect.top == self.rect.bottom:
                     self.on_ground = True
 
@@ -124,15 +124,28 @@ class Player(MoveableEntity):
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
 
-    def danger_collision(self):
+    def detect_danger(self):
         for sprite in self.collidable_sprites["danger"]:
             sprite_mask = pg.mask.from_surface(sprite.image)
             mask = pg.mask.from_surface(self.image)
-            if sprite_mask.overlap(mask, (self.pos.x - sprite.pos.x, self.pos.y - sprite.pos.y)):
-                self.restart()
+            if sprite_mask.overlap(mask,
+                                 (abs(sprite.pos.x - self.pos.x), abs(sprite.pos.y - self.pos.y))):
+                self.damage(sprite.get_damage())
+                self.knockback(sprite)
+
+    def damage(self, damage):
+        if damage >= self.health:
+            self.restart()
+        else:
+            self.health -= damage
 
     def restart(self):
         self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
+
+    def knockback(self, sprite):
+        knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x)
+        self.pos.x += knockback_direction * Player.KNOCKBACK + (sprite.image.get_width() // 2) * knockback_direction
+        self.move()
 
     def update(self, delta_time):
         if self.pos.y > Player.DEATH_HEIGHT:
@@ -144,7 +157,7 @@ class Player(MoveableEntity):
         self.gravity()
         self.move()
         self.animation()
-        self.danger_collision()
+        self.detect_danger()
 
 
 class Tile(Entity):

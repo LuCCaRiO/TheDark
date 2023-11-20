@@ -18,7 +18,7 @@ class HealthBar(UI):
         health_bar.blit(HealthBar.BAR_IMAGE, (0, 0))
         super(HealthBar, self).__init__([health_bar], pos, groups)
         self.current_health = 0
-        self.set_health(0)
+        self.set_health(100)
         self.draw_health()
 
     def draw_health(self):
@@ -58,9 +58,9 @@ class Light(UI):
 
     def draw(self):
         self.image.fill((0, 0, 0, 0))
-        pg.draw.circle(self.image, (255, 255, 255, 65), (self.radius, self.radius), self.radius - abs(mt.sin(self.timer / 300) * 10))
-        pg.draw.circle(self.image, (255, 255, 255, 80), (self.radius, self.radius), self.radius // 1.3 - abs(mt.cos(self.timer / 350) * 10))
-        pg.draw.circle(self.image, (255, 255, 255, 95), (self.radius, self.radius), self.radius // 1.8 - abs(mt.cos(self.timer / 400) * 10))
+        pg.draw.circle(self.image, (130, 130, 130, 17), (self.radius, self.radius), self.radius - abs(mt.sin(self.timer / 300) * 7))
+        pg.draw.circle(self.image, (130, 130, 130, 22), (self.radius, self.radius), self.radius // 1.3 - abs(mt.cos(self.timer / 350) * 7))
+        pg.draw.circle(self.image, (130, 130, 130, 27), (self.radius, self.radius), self.radius // 1.8 - abs(mt.cos(self.timer / 400) * 7))
 
     def update(self, delta_time):
         self.delta_time = delta_time / SECOND

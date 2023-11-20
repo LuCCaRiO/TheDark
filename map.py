@@ -5,16 +5,16 @@ import csv
 from settings import *
 from camera import Camera
 from entity import Tile, Player
+from danger import Slime, Spike
 
 
 class Map:
     def __init__(self):
         self.rendered_entities = Camera()
-        self.user_interface = pg.sprite.Group()
+        self.dangerous_entities = pg.sprite.Group()
         self.collidable_entities = pg.sprite.Group()
-        self.danger_entities = pg.sprite.Group()
         self.collision = {"ground": self.collidable_entities,
-                          "danger": self.danger_entities}
+                          "danger": self.dangerous_entities}
 
         self.player = None
 
@@ -36,12 +36,12 @@ class Map:
                     Tile([pg.image.load(f"images/Tiles/tiles{element}.png")],
                          (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.collidable_entities])
                 elif element == "d":
-                    Tile([pg.image.load(f"images/Tiles/tiles1.png")],
-                         (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.danger_entities])
+                    Spike((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
                 elif element == "p":
                     self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision)
+                elif element == "s":
+                    Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)
         self.rendered_entities.render(self.player)
-        pg.draw.rect(pg.display.get_surface(), (255, 255, 255), self.player.rectangle)

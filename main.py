@@ -25,8 +25,8 @@ class Game:
             self.screen.fill((100, 100, 100))
             self.map.update(delta_time)
             self.user_interface.update(delta_time)
+            self.health_bar.set_health(self.map.player.health)
             self.user_interface.draw(self.screen)
-            self.health_bar.set_health(self.health_bar.current_health + (delta_time / SECOND) * 10)
 
             pg.display.update()
 
@@ -39,10 +39,10 @@ class Game:
     def create_ui(self):
         screen_width, screen_height = self.screen.get_size()
 
-        Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
         dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
-        dark.fill((0, 0, 0, 200))
+        dark.fill((0, 0, 0, 220))
         UI([dark], (0, 0), [self.user_interface])
+        Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])
 
