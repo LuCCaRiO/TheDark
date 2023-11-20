@@ -126,10 +126,11 @@ class Player(MoveableEntity):
 
     def detect_danger(self):
         for sprite in self.collidable_sprites["danger"]:
-            sprite_mask = pg.mask.from_surface(sprite.image)
             mask = pg.mask.from_surface(self.image)
-            if sprite_mask.overlap(mask,
-                                 (abs(sprite.pos.x - self.pos.x), abs(sprite.pos.y - self.pos.y))):
+            if mask.overlap(sprite.mask,
+                                 (sprite.pos.x - self.pos.x, sprite.pos.y - self.pos.y)):
+
+                print(sprite.__class__)
                 self.damage(sprite.get_damage())
                 self.knockback(sprite)
 
@@ -152,12 +153,12 @@ class Player(MoveableEntity):
             self.restart()
 
         self.delta_time = delta_time
+        self.detect_danger()
         self.detect_ground()
         self.input()
         self.gravity()
         self.move()
         self.animation()
-        self.detect_danger()
 
 
 class Tile(Entity):

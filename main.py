@@ -7,7 +7,8 @@ from user_interface import Light, HealthBar, UI
 class Game:
     def __init__(self):
         monitor_size = pg.display.Info()
-        self.screen = pg.display.set_mode((monitor_size.current_w, monitor_size.current_h), pg.FULLSCREEN)
+        self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
+                                           monitor_size.current_h), pg.FULLSCREEN)
 
         self.map = Map()
 

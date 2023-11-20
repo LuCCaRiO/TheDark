@@ -11,9 +11,6 @@ class Danger(MoveableEntity):
     def get_damage(self):
         return self.damage
 
-    def set_player(self, player):
-        self.player = player
-
 
 class Enemy(Danger):
     def __init__(self, anm, pos, groups, damage):
