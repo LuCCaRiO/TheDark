@@ -58,9 +58,9 @@ class Light(UI):
 
     def draw(self):
         self.image.fill((0, 0, 0, 0))
-        pg.draw.circle(self.image, (130, 130, 130, 17), (self.radius, self.radius), self.radius - abs(mt.sin(self.timer / 300) * 7))
-        pg.draw.circle(self.image, (130, 130, 130, 22), (self.radius, self.radius), self.radius // 1.3 - abs(mt.cos(self.timer / 350) * 7))
-        pg.draw.circle(self.image, (130, 130, 130, 27), (self.radius, self.radius), self.radius // 1.8 - abs(mt.cos(self.timer / 400) * 7))
+        pg.draw.circle(self.image, (200, 200, 200, 17), (self.radius, self.radius), self.radius - abs(mt.sin(self.timer / 300) * 7))
+        pg.draw.circle(self.image, (200, 200, 200, 22), (self.radius, self.radius), self.radius // 1.3 - abs(mt.cos(self.timer / 350) * 7))
+        pg.draw.circle(self.image, (200, 200, 200, 27), (self.radius, self.radius), self.radius // 1.8 - abs(mt.cos(self.timer / 400) * 7))
 
     def update(self, delta_time):
         self.delta_time = delta_time / SECOND

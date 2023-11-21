@@ -128,9 +128,7 @@ class Player(MoveableEntity):
         for sprite in self.collidable_sprites["danger"]:
             mask = pg.mask.from_surface(self.image)
             if mask.overlap(sprite.mask,
-                                 (sprite.pos.x - self.pos.x, sprite.pos.y - self.pos.y)):
-
-                print(sprite.__class__)
+                                 (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
                 self.damage(sprite.get_damage())
                 self.knockback(sprite)
 
@@ -146,14 +144,16 @@ class Player(MoveableEntity):
     def knockback(self, sprite):
         knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x)
         self.pos.x += knockback_direction * Player.KNOCKBACK + (sprite.image.get_width() // 2) * knockback_direction
+        self.rect.x = round(self.pos.x)
+        self.hitbox.x = self.rect.x
         self.move()
 
     def update(self, delta_time):
+        self.detect_danger()
         if self.pos.y > Player.DEATH_HEIGHT:
             self.restart()
 
         self.delta_time = delta_time
-        self.detect_danger()
         self.detect_ground()
         self.input()
         self.gravity()

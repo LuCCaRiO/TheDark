@@ -40,7 +40,7 @@ class Map:
                 elif element == "p":
                     self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision)
                 elif element == "s":
-                    Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
+                    Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision)
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)
