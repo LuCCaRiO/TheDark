@@ -1,6 +1,6 @@
 import random
-
 import pygame as pg
+from particles import ParticleSystem
 
 
 class Camera(pg.sprite.Group):
@@ -13,5 +13,19 @@ class Camera(pg.sprite.Group):
             self.offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
             self.offset.y = pg.display.get_surface().get_height() // 3
 
-        for sprite in self.sprites():
+        sprites = self.sort_algorithm()
+        for sprite in sprites:
             pg.display.get_surface().blit(sprite.image, sprite.rect.topleft - self.offset)
+
+    def sort_algorithm(self):
+        sprites = []
+        sort = [ParticleSystem]
+        for sprite in self.sprites():
+            for class_ in sort:
+                if sprite.__class__ == class_:
+                    sprites.append(sprite)
+
+        for sprite in self.sprites():
+            if sprite not in sprites:
+                sprites.append(sprite)
+        return sprites

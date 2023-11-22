@@ -1,6 +1,7 @@
 import pygame as pg
 from entity import MoveableEntity
 from settings import *
+from particles import ParticleSystem
 
 
 class Danger(MoveableEntity):
@@ -30,12 +31,14 @@ class Slime(Enemy):
     SLIME_IMAGE = pg.image.load("images/slime.png")
     DAMAGE = 34
     SPEED = 3
+    SPAWN_PARTICLE_TIME = 0.2
     
     def __init__(self, pos, groups, collidable_sprites):
         super(Slime, self).__init__([Slime.SLIME_IMAGE], pos, groups, Slime.DAMAGE)
         self.direction = pg.math.Vector2(1, 0)
         self.collidable_sprites = collidable_sprites
         self.flip = False
+        self.particle_timer = 0
 
     def move(self):
         self.pos.x += self.direction.x * Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
@@ -54,12 +57,22 @@ class Slime(Enemy):
             self.flip = False
             self.image = pg.transform.flip(self.image, True, False)
 
+    def create_particles(self):
+        self.particle_timer += self.delta_time
+        if self.particle_timer > Slime.SPAWN_PARTICLE_TIME * SECOND:
+            self.particle_timer = 0
+            pos = self.rect.center + pg.math.Vector2(0, 8) if self.direction.x < 0 else self.rect.midleft + pg.math.Vector2(-8, 8)
+
+            ParticleSystem(pos, (50, 50), self.groups()[0], 3, 2).start()
+
     def update(self, delta_time):
         self.delta_time = delta_time
         self.mask = pg.mask.from_surface(self.image)
         self.detect_collision()
         self.animation()
         self.move()
+        self.create_particles()
+
 
 class Spike(Danger):
     SPIKE_IMAGE = pg.image.load("images/Tiles/tiles1.png")

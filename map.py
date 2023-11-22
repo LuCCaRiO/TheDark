@@ -6,6 +6,7 @@ from settings import *
 from camera import Camera
 from entity import Tile, Player
 from danger import Slime, Spike
+from particles import ParticleSystem
 
 
 class Map:
