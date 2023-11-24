@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
         monitor_size = pg.display.Info()
         self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
-                                           monitor_size.current_h), pg.FULLSCREEN)
+                                           monitor_size.current_h))
 
         self.map = Map()
 
@@ -36,6 +36,9 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 exit()
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_w:
+                    self.map.player.jump()
 
     def create_ui(self):
         screen_width, screen_height = self.screen.get_size()

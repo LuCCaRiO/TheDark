@@ -25,10 +25,10 @@ class MoveableEntity(Entity):
 class Player(MoveableEntity):
     SPEED = 10
     GRAVITY = 0.7
-    JUMP_FORCE = -13
+    JUMP_FORCE = -11
     DEATH_HEIGHT = 1200
-    KNOCKBACK = 50
-    IMMORTALITY = 2.5
+    KNOCKBACK = 60
+    IMMORTALITY = 1.5
     IMMORTALITY_FADE = 125
 
     def __init__(self, pos, groups, collidable_sprites):
@@ -47,6 +47,7 @@ class Player(MoveableEntity):
         self.flipped = False
         self.hitbox = self.rect.inflate(-10, 0)
         self.on_ground = False
+        self.allow_jump = False
 
         self.collidable_sprites = collidable_sprites
 
@@ -84,8 +85,11 @@ class Player(MoveableEntity):
         else:
             self.direction.x = 0
 
-        if keys[pg.K_w] and self.on_ground:
+    def jump(self):
+        if self.allow_jump:
             self.direction.y = Player.JUMP_FORCE
+            if not self.on_ground:
+                self.allow_jump = False
 
     def gravity(self):
         self.direction.y += Player.GRAVITY * (self.delta_time / RELATION_DELTA_TIME)
@@ -109,6 +113,7 @@ class Player(MoveableEntity):
             if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 9:
                 if sprite.rect.top == self.rect.bottom:
                     self.on_ground = True
+                    self.allow_jump = True
 
     def ground_collision(self, direction):
         for sprite in self.collidable_sprites["ground"]:
@@ -138,9 +143,9 @@ class Player(MoveableEntity):
             if mask.overlap(sprite.mask,
                                  (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)) \
                     and not self.immortal:
-                self.damage(sprite.get_damage())
                 self.knockback(sprite)
                 self.immortal = True
+                self.damage(sprite.get_damage())
 
     def damage(self, damage):
         if damage >= self.health:
@@ -150,7 +155,6 @@ class Player(MoveableEntity):
 
     def restart(self):
         self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
-        print(self.immortal)
 
     def knockback(self, sprite):
         knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x)
@@ -159,6 +163,7 @@ class Player(MoveableEntity):
         self.hitbox.x = self.rect.x
         self.direction.x = knockback_direction
         self.ground_collision(HORIZONTAL)
+        self.direction.x = 0
 
     def immortality(self):
         if self.immortal:
@@ -170,13 +175,14 @@ class Player(MoveableEntity):
     def update(self, delta_time):
         if self.pos.y > Player.DEATH_HEIGHT:
             self.restart()
+
         self.delta_time = delta_time
         self.detect_ground()
         self.input()
         self.gravity()
         self.move()
-        self.immortality()
         self.detect_danger()
+        self.immortality()
         self.animation()
 
 
