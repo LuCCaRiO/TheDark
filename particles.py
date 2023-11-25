@@ -33,7 +33,7 @@ class ParticleSystem(MoveableEntity):
         for particle in self.particles:
             velocity = (particle.velocity.x, particle.velocity.y + (particle.gravity * (self.delta_time / RELATION_DELTA_TIME)))
             particle.set_velocity(velocity)
-            particle.set_pos(particle.pos + particle.velocity)
+            particle.set_pos(particle.pos + particle.velocity * (self.delta_time / RELATION_DELTA_TIME))
             particle.set_fade(particle.fade - self.delta_time * 0.2)
 
     def delete_particles(self):

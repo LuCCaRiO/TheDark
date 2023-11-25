@@ -25,7 +25,7 @@ class MoveableEntity(Entity):
 class Player(MoveableEntity):
     SPEED = 10
     GRAVITY = 0.7
-    JUMP_FORCE = -11
+    JUMP_FORCE = -11.5
     DEATH_HEIGHT = 1200
     KNOCKBACK = 60
     IMMORTALITY = 1.5
@@ -52,6 +52,7 @@ class Player(MoveableEntity):
         self.collidable_sprites = collidable_sprites
 
         self.health = 100
+        self.magic = 100
 
         self.immortality_timer = 0
         self.immortal = False
@@ -87,9 +88,20 @@ class Player(MoveableEntity):
 
     def jump(self):
         if self.allow_jump:
-            self.direction.y = Player.JUMP_FORCE
-            if not self.on_ground:
+            if self.on_ground:
+                self.direction.y = Player.JUMP_FORCE
+            elif self.magic > 0:
+                self.direction.y = Player.JUMP_FORCE
                 self.allow_jump = False
+                self.set_magic(self.magic - 10)
+
+    def set_magic(self, value):
+        if 0 > value:
+            self.magic = 0
+        elif value > 100:
+            self.magic = 100
+        else:
+            self.magic = value
 
     def gravity(self):
         self.direction.y += Player.GRAVITY * (self.delta_time / RELATION_DELTA_TIME)
@@ -157,7 +169,7 @@ class Player(MoveableEntity):
         self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
 
     def knockback(self, sprite):
-        knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x)
+        knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x) + 0.01  # avoid division by zero
         self.pos.x += knockback_direction * Player.KNOCKBACK + (sprite.image.get_width() // 2) * knockback_direction
         self.rect.x = round(self.pos.x)
         self.hitbox.x = self.rect.x

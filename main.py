@@ -1,7 +1,7 @@
 import pygame as pg
 from map import Map
 from settings import *
-from user_interface import Light, HealthBar, UI
+from user_interface import Light, HealthBar, MagicBar, UI
 
 
 class Game:
@@ -13,6 +13,10 @@ class Game:
         self.map = Map()
 
         self.health_bar = None
+        self.magic_bar = None
+
+        self.time = NORMAL_TIME
+        self.ability_on = False
 
         self.user_interface = pg.sprite.Group()
         self.create_ui()
@@ -23,13 +27,23 @@ class Game:
             delta_time = clock.tick(FPS)
             self.handle_events()
 
-            self.screen.fill((100, 100, 100))
+            self.screen.fill((75, 75, 75))
+            delta_time *= self.time
             self.map.update(delta_time)
+            self.ability_mode(delta_time)
             self.user_interface.update(delta_time)
-            self.health_bar.set_health(self.map.player.health)
+            self.health_bar.set_value(self.map.player.health)
+            self.magic_bar.set_value(self.map.player.magic)
             self.user_interface.draw(self.screen)
 
             pg.display.update()
+
+    def ability_mode(self, delta_time):
+        if self.map.player.magic <= 0:
+            self.ability_on = False
+            self.time = NORMAL_TIME
+        elif self.ability_on:
+            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME))
 
     def handle_events(self):
         for event in pg.event.get():
@@ -39,16 +53,24 @@ class Game:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_w:
                     self.map.player.jump()
+                if event.key == pg.K_SPACE:
+                    if not self.ability_on:
+                        self.ability_on = True
+                        self.time = ABILITY_TIME
+                    else:
+                        self.ability_on = False
+                        self.time = NORMAL_TIME
 
     def create_ui(self):
         screen_width, screen_height = self.screen.get_size()
 
         dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
-        dark.fill((0, 0, 0, 220))
+        dark.fill((0, 0, 0, 200))
         UI([dark], (0, 0), [self.user_interface])
         Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])
+        self.magic_bar = MagicBar((10, 100), [self.user_interface])
 
 
 if __name__ == "__main__":

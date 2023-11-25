@@ -9,35 +9,59 @@ class UI(Entity):
         super(UI, self).__init__(anm, pos, groups, scale_multiply)
 
 
-class HealthBar(UI):
+class Bar(UI):
+    def __init__(self, pos, groups, bar_image, bar_edge_image):
+        self.bar_image = bar_image
+        self.bar_edge_image = bar_edge_image
+        bar = pg.Surface(self.bar_image.get_size(), pg.SRCALPHA)
+        bar.blit(bar_image, (0, 0))
+        super(Bar, self).__init__([bar], pos, groups)
+        self.current_value = 0
+
+    def draw(self, color, height):
+        ratio = (self.image.get_width() - 20) / 100
+        self.image.blit(HealthBar.scale_up([self.bar_image], 0, TILE_SIZE / 8), (0, 0))
+        pg.draw.rect(self.image, color, (10, 10, ratio * self.current_value, height))
+        self.image.blit(HealthBar.scale_up([self.bar_edge_image], 0, TILE_SIZE / 8), (0, 0))
+
+    def set_value(self, value):
+        if value < 0:
+            self.current_value = 0
+        elif value > 100:
+            self.current_value = 100
+        else:
+            self.current_value = value
+        return self.current_value
+
+
+class HealthBar(Bar):
     BAR_IMAGE = pg.image.load("images/health_bar.png")
     BAR_EDGE_IMAGE = pg.image.load("images/health_bar_edge.png")
+    COLOR = (0, 100, 0, 100)
+    HEIGHT = 64
 
     def __init__(self, pos, groups):
-        health_bar = pg.Surface(HealthBar.BAR_IMAGE.get_size(), pg.SRCALPHA)
-        health_bar.blit(HealthBar.BAR_IMAGE, (0, 0))
-        super(HealthBar, self).__init__([health_bar], pos, groups)
-        self.current_health = 0
-        self.set_health(100)
-        self.draw_health()
-
-    def draw_health(self):
-        ratio = (self.image.get_width() - 20) / 100
-        self.image.blit(HealthBar.scale_up([HealthBar.BAR_IMAGE], 0, TILE_SIZE / 8), (0, 0))
-        pg.draw.rect(self.image, (0, 100, 0, 100), (10, 10, ratio * self.current_health, 64))
-        self.image.blit(HealthBar.scale_up([HealthBar.BAR_EDGE_IMAGE], 0, TILE_SIZE / 8), (0, 0))
-
-    def set_health(self, health_to_set):
-        if health_to_set < 0:
-            self.current_health = 0
-        elif health_to_set > 100:
-            self.current_health = 100
-        else:
-            self.current_health = health_to_set
-        return self.current_health
+        super(HealthBar, self).__init__(pos, groups, HealthBar.BAR_IMAGE, HealthBar.BAR_EDGE_IMAGE)
+        self.set_value(100)
+        self.draw(HealthBar.COLOR, HealthBar.HEIGHT)
 
     def update(self, delta_time):
-        self.draw_health()
+        self.draw(HealthBar.COLOR, HealthBar.HEIGHT)
+
+
+class MagicBar(Bar):
+    BAR_IMAGE = pg.image.load("images/ability_bar.png")
+    BAR_EDGE_IMAGE = pg.image.load("images/ability_bar_edge.png")
+    COLOR = (230, 100, 0, 100)
+    HEIGHT = 32
+
+    def __init__(self, pos, groups):
+        super(MagicBar, self).__init__(pos, groups, MagicBar.BAR_IMAGE, MagicBar.BAR_EDGE_IMAGE)
+        self.set_value(100)
+        self.draw(MagicBar.COLOR, MagicBar.HEIGHT)
+
+    def update(self, delta_time):
+        self.draw(MagicBar.COLOR, MagicBar.HEIGHT)
 
 
 class Light(UI):
