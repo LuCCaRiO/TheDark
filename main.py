@@ -28,9 +28,9 @@ class Game:
             self.handle_events()
 
             self.screen.fill((75, 75, 75))
+            self.ability_mode(delta_time)
             delta_time *= self.time
             self.map.update(delta_time)
-            self.ability_mode(delta_time)
             self.user_interface.update(delta_time)
             self.health_bar.set_value(self.map.player.health)
             self.magic_bar.set_value(self.map.player.magic)
@@ -43,7 +43,7 @@ class Game:
             self.ability_on = False
             self.time = NORMAL_TIME
         elif self.ability_on:
-            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME))
+            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME) * 0.5)
 
     def handle_events(self):
         for event in pg.event.get():
@@ -65,7 +65,7 @@ class Game:
         screen_width, screen_height = self.screen.get_size()
 
         dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
-        dark.fill((0, 0, 0, 200))
+        dark.fill((0, 0, 0, 210))
         UI([dark], (0, 0), [self.user_interface])
         Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
 

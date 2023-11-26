@@ -52,7 +52,7 @@ class HealthBar(Bar):
 class MagicBar(Bar):
     BAR_IMAGE = pg.image.load("images/ability_bar.png")
     BAR_EDGE_IMAGE = pg.image.load("images/ability_bar_edge.png")
-    COLOR = (230, 100, 0, 100)
+    COLOR = (138,43,226, 70)
     HEIGHT = 32
 
     def __init__(self, pos, groups):

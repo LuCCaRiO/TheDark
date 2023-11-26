@@ -4,7 +4,7 @@ import csv
 
 from settings import *
 from camera import Camera
-from entity import Tile, Player
+from entity import Tile, Player, Magic
 from danger import Slime, Spike
 from particles import ParticleSystem
 
@@ -14,8 +14,10 @@ class Map:
         self.rendered_entities = Camera()
         self.dangerous_entities = pg.sprite.Group()
         self.collidable_entities = pg.sprite.Group()
+        self.magic_entities = pg.sprite.Group()
         self.collision = {"ground": self.collidable_entities,
-                          "danger": self.dangerous_entities}
+                          "danger": self.dangerous_entities,
+                          "magic": self.magic_entities}
 
         self.player = None
 
@@ -42,6 +44,8 @@ class Map:
                     self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision)
                 elif element == "s":
                     Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision)
+                elif element == "e":
+                    Magic((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.magic_entities])
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)
