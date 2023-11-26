@@ -12,6 +12,7 @@ class Game:
 
         self.map = Map()
 
+        self.dark = None
         self.health_bar = None
         self.magic_bar = None
 
@@ -31,6 +32,12 @@ class Game:
             self.ability_mode(delta_time)
             delta_time *= self.time
             self.map.update(delta_time)
+
+            if self.ability_on:
+                self.dark.image.fill(ABILITY_COLOR)
+            else:
+                self.dark.image.fill(NORMAL_COLOR)
+
             self.user_interface.update(delta_time)
             self.health_bar.set_value(self.map.player.health)
             self.magic_bar.set_value(self.map.player.magic)
@@ -65,8 +72,9 @@ class Game:
         screen_width, screen_height = self.screen.get_size()
 
         dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
-        dark.fill((0, 0, 0, 210))
-        UI([dark], (0, 0), [self.user_interface])
+        dark.fill(NORMAL_COLOR)
+
+        self.dark = UI([dark], (0, 0), [self.user_interface])
         Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])

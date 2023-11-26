@@ -30,6 +30,7 @@ class Enemy(Danger):
 class Slime(Enemy):
     SLIME_IMAGE = pg.image.load("images/slime.png")
     DAMAGE = 34
+    KNOCKBACK = 60
     SPEED = 3
     SPAWN_PARTICLE_TIME = 0.2
     
@@ -47,6 +48,10 @@ class Slime(Enemy):
     def detect_collision(self):
         for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.rect):
+                if self.direction.x > 0:
+                    self.rect.right = sprite.rect.left
+                else:
+                    self.rect.left = sprite.rect.right
                 self.direction.x *= -1
 
     def animation(self):
@@ -77,6 +82,16 @@ class Slime(Enemy):
 class Spike(Danger):
     SPIKE_IMAGE = pg.image.load("images/Tiles/tiles1.png")
     DAMAGE = 100
+    KNOCKBACK = 0
 
     def __init__(self, pos, groups):
         super(Spike, self).__init__([Spike.SPIKE_IMAGE], pos, groups, Spike.DAMAGE)
+
+
+class Spiky(Danger):
+    SPIKY_IMAGE = pg.image.load("images/spikey.png")
+    DAMAGE = 50
+    KNOCKBACK = 100
+
+    def __init__(self, pos, groups):
+        super(Spiky, self).__init__([Spiky.SPIKY_IMAGE], pos, groups, Spiky.DAMAGE)

@@ -29,7 +29,6 @@ class Player(MoveableEntity):
     GRAVITY = 0.7
     JUMP_FORCE = -11.5
     DEATH_HEIGHT = 1200
-    KNOCKBACK = 60
     IMMORTALITY = 1.5
     IMMORTALITY_FADE = 125
 
@@ -47,7 +46,7 @@ class Player(MoveableEntity):
 
         self.direction = pg.math.Vector2()
         self.flipped = False
-        self.hitbox = self.rect.inflate(-10, 0)
+        self.hitbox = self.rect.inflate(-12, 0)
         self.on_ground = False
         self.allow_jump = False
 
@@ -152,6 +151,12 @@ class Player(MoveableEntity):
                     self.pos.y = self.hitbox.centery
 
     def detect_collision(self):
+        for sprite in self.collidable_sprites["magic"]:
+            mask = pg.mask.from_surface(self.image)
+            if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
+                self.set_magic(self.magic + sprite.magic)
+                sprite.kill()
+
         for sprite in self.collidable_sprites["danger"]:
             mask = pg.mask.from_surface(self.image)
             if mask.overlap(sprite.mask,
@@ -160,12 +165,6 @@ class Player(MoveableEntity):
                 self.knockback(sprite)
                 self.immortal = True
                 self.damage(sprite.get_damage())
-
-        for sprite in self.collidable_sprites["magic"]:
-            mask = pg.mask.from_surface(self.image)
-            if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
-                self.set_magic(self.magic + sprite.magic)
-                sprite.kill()
 
     def damage(self, damage):
         if damage >= self.health:
@@ -178,7 +177,7 @@ class Player(MoveableEntity):
 
     def knockback(self, sprite):
         knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x) + 0.01  # avoid division by zero
-        self.pos.x += knockback_direction * Player.KNOCKBACK + (sprite.image.get_width() // 2) * knockback_direction
+        self.pos.x += knockback_direction * sprite.KNOCKBACK + (sprite.image.get_width() // 2) * knockback_direction
         self.rect.x = round(self.pos.x)
         self.hitbox.x = self.rect.x
         self.direction.x = knockback_direction

@@ -5,7 +5,7 @@ import csv
 from settings import *
 from camera import Camera
 from entity import Tile, Player, Magic
-from danger import Slime, Spike
+from danger import Slime, Spike, Spiky
 from particles import ParticleSystem
 
 
@@ -46,6 +46,8 @@ class Map:
                     Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision)
                 elif element == "e":
                     Magic((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.magic_entities])
+                elif element == "q":
+                    Spiky((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)
