@@ -37,7 +37,8 @@ class Player(MoveableEntity):
                         pg.image.load("images/BlackSprite/blackSprite_1.png"),
                         pg.image.load("images/BlackSprite/blackSprite_2.png"),
                         pg.image.load("images/BlackSprite/blackSprite_3.png")],
-                        "fall": [pg.image.load("images/BlackSprite/falling.png")]}
+                        "fall": [pg.image.load("images/BlackSprite/falling.png")],
+                        "heal": [pg.image.load("images/BlackSprite/heal.png")]}
 
         super(Player, self).__init__(sprite_sheet["run"], pos, groups)
         self.start_pos = pg.math.Vector2(pos)
@@ -58,16 +59,26 @@ class Player(MoveableEntity):
         self.immortality_timer = 0
         self.immortal = False
 
+        self.animation_state = "run"
+
+    def heal(self):
+        hp = ((self.delta_time // 2) / RELATION_DELTA_TIME)
+        if self.magic >= hp and self.health < 100:
+            self.set_magic(self.magic - hp * 2)
+            self.set_health(self.health + hp)
+            self.animation_state = "heal"
+
     def animation(self):
         self.anm_index += self.delta_time * 0.008
 
-        if self.anm_index >= len(self.sprite_sheet["run"]) or self.direction.x == 0:
+        if self.anm_index >= len(self.sprite_sheet[self.animation_state]) or self.direction.x == 0:
             self.anm_index = 0
 
-        if self.on_ground:
-            self.image = Player.scale_up(self.sprite_sheet["run"], int(self.anm_index), TILE_SIZE / 8)
-        else:
-            self.image = Player.scale_up(self.sprite_sheet["fall"], 0, TILE_SIZE / 8)
+        if self.animation_state != "heal" and not self.on_ground:
+            self.animation_state = "fall"
+            self.anm_index = 0
+
+        self.image = Player.scale_up(self.sprite_sheet[self.animation_state], int(self.anm_index), TILE_SIZE / 8)
 
         if self.direction.x < 0 or self.flipped:
             self.image = pg.transform.flip(self.image, True, False)
@@ -80,12 +91,16 @@ class Player(MoveableEntity):
 
     def input(self):
         keys = pg.key.get_pressed()
+        self.animation_state = "run"
         if keys[pg.K_a]:
             self.direction.x = -1
         elif keys[pg.K_d]:
             self.direction.x = 1
         else:
             self.direction.x = 0
+
+        if keys[pg.K_q] and self.on_ground and self.direction.x == 0:
+            self.heal()
 
     def jump(self):
         if self.allow_jump:
@@ -103,6 +118,14 @@ class Player(MoveableEntity):
             self.magic = 100
         else:
             self.magic = value
+
+    def set_health(self, value):
+        if 0 > value:
+            self.health = 0
+        elif value > 100:
+            self.health = 100
+        else:
+            self.health = value
 
     def gravity(self):
         self.direction.y += Player.GRAVITY * (self.delta_time / RELATION_DELTA_TIME)

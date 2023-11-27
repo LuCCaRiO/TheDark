@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
         monitor_size = pg.display.Info()
         self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
-                                           monitor_size.current_h))
+                                           monitor_size.current_h), pg.FULLSCREEN)
 
         self.map = Map()
 
