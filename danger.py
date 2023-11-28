@@ -49,9 +49,9 @@ class Slime(Enemy):
         for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.rect):
                 if self.direction.x > 0:
-                    self.rect.right = sprite.rect.left
+                    self.rect.right = sprite.rect.left - self.direction.x * Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
                 else:
-                    self.rect.left = sprite.rect.right
+                    self.rect.left = sprite.rect.right + self.direction.x * Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
                 self.direction.x *= -1
 
     def animation(self):

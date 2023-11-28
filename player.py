@@ -1,6 +1,7 @@
 import pygame as pg
 from entity import MoveableEntity
 from particles import PlayerParticleSystem
+from camera import Camera
 from settings import *
 
 
@@ -47,6 +48,9 @@ class Player(MoveableEntity):
             self.set_magic(self.magic - hp * 2)
             self.set_health(self.health + hp)
             self.animation_state = "heal"
+            Camera.instance.set_focus(True)
+        else:
+            Camera.instance.set_focus(False)
 
     def animation(self):
         self.anm_index += self.delta_time * 0.008
@@ -81,6 +85,8 @@ class Player(MoveableEntity):
 
         if keys[pg.K_q] and self.on_ground and self.direction.x == 0:
             self.heal()
+        else:
+            Camera.instance.set_focus(False)
 
     def jump(self):
         if self.allow_jump:

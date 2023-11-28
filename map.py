@@ -52,4 +52,4 @@ class Map:
 
     def update(self, delta_time):
         self.rendered_entities.update(delta_time)
-        self.rendered_entities.render(self.player)
+        self.rendered_entities.render(delta_time, self.player)

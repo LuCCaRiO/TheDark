@@ -2,6 +2,7 @@ import pygame as pg
 import math as mt
 from entity import Entity
 from settings import *
+from camera import Camera
 
 
 class UI(Entity):
@@ -75,9 +76,9 @@ class Light(UI):
         self.radius = radius
 
     def move(self):
-        screen_height = self.screen.get_height()
-
-        self.pos.y = self.player.hitbox.top - screen_height // 2
+        self.pos.x = self.player.rect.centerx - Camera.instance.offset.x - self.image.get_width() // 2
+        self.pos.y = self.player.rect.centery - Camera.instance.offset.y - self.image.get_height() // 2
+        self.rect.x = round(self.pos.x)
         self.rect.y = round(self.pos.y)
 
     def draw(self):
