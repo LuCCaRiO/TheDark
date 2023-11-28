@@ -1,7 +1,7 @@
 import pygame as pg
 from entity import MoveableEntity
 from settings import *
-from particles import ParticleSystem
+from particles import SlimeParticleSystem
 
 
 class Danger(MoveableEntity):
@@ -68,7 +68,7 @@ class Slime(Enemy):
             self.particle_timer = 0
             pos = self.rect.center + pg.math.Vector2(0, 8) if self.direction.x < 0 else self.rect.midleft + pg.math.Vector2(-8, 8)
 
-            ParticleSystem(pos, (50, 50), self.groups()[0], 3, 2).start()
+            SlimeParticleSystem(pos, (50, 50), self.groups()[0], 3, 2).start()
 
     def update(self, delta_time):
         self.delta_time = delta_time

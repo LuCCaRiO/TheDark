@@ -1,6 +1,6 @@
 import random
 import pygame as pg
-from particles import ParticleSystem
+from particles import SlimeParticleSystem
 from entity import Magic
 
 
@@ -20,7 +20,7 @@ class Camera(pg.sprite.Group):
 
     def sort_algorithm(self):
         sprites = []
-        sort = [ParticleSystem, Magic]
+        sort = [SlimeParticleSystem, Magic]
         for sprite in self.sprites():
             for class_ in sort:
                 if sprite.__class__ == class_:

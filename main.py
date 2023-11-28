@@ -50,7 +50,7 @@ class Game:
             self.ability_on = False
             self.time = NORMAL_TIME
         elif self.ability_on:
-            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME) * 0.5)
+            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME) * 0.33)
 
     def handle_events(self):
         for event in pg.event.get():

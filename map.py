@@ -4,7 +4,8 @@ import csv
 
 from settings import *
 from camera import Camera
-from entity import Tile, Player, Magic
+from entity import Tile, Magic
+from player import Player
 from danger import Slime, Spike, Spiky
 from particles import ParticleSystem
 

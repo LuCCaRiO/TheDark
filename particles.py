@@ -1,13 +1,10 @@
 import random
-
 import pygame as pg
 from entity import MoveableEntity
 from settings import *
 
 
 class ParticleSystem(MoveableEntity):
-    PARTICLE = pg.transform.scale(pg.image.load("images/particle.png"), (9, 9))
-
     def __init__(self, pos, size, groups, time, particles):
         surface = pg.Surface(size, pg.SRCALPHA)
         super(ParticleSystem, self).__init__([surface], pos, groups, 1)
@@ -19,10 +16,7 @@ class ParticleSystem(MoveableEntity):
         self.total_time = time
 
     def start(self):
-        for index in range(self.total_particles):
-            pos = (self.image.get_width() // 2, self.image.get_height() // 2)
-            velocity = (random.uniform(-0.5, 0.5), random.uniform(-0.5, -3))
-            self.particles.append(Particle(ParticleSystem.PARTICLE, pos, 0.2, velocity))
+        pass
 
     def draw(self):
         self.image.fill((0, 0, 0, 0))
@@ -44,11 +38,37 @@ class ParticleSystem(MoveableEntity):
         self.delta_time = delta_time
         self.timer += self.delta_time
         self.physics()
+        self.draw()
 
         if self.timer > self.total_time * SECOND:
             self.delete_particles()
+            del self
 
-        self.draw()
+
+class PlayerParticleSystem(ParticleSystem):
+    PARTICLE = pg.transform.scale(pg.image.load("images/particle.png"), (9, 9))
+
+    def __init__(self, pos, size, groups, time, particles):
+        super(PlayerParticleSystem, self).__init__(pos, size, groups, time, particles)
+
+    def start(self):
+        for index in range(self.total_particles):
+            pos = (self.image.get_width() // 2, self.image.get_height() // 2)
+            velocity = (random.uniform(-2, 2), random.uniform(-1, -3))
+            self.particles.append(Particle(PlayerParticleSystem.PARTICLE, pos, 0.2, velocity))
+
+class SlimeParticleSystem(ParticleSystem):
+    PARTICLE = pg.transform.scale(pg.image.load("images/particle.png"), (9, 9))
+
+    def __init__(self, pos, size, groups, time, particles):
+        super(SlimeParticleSystem, self).__init__(pos, size, groups, time, particles)
+
+    def start(self):
+        for index in range(self.total_particles):
+            pos = (self.image.get_width() // 2, self.image.get_height() // 2)
+            velocity = (random.uniform(-0.5, 0.5), random.uniform(-0.5, -3))
+            self.particles.append(Particle(SlimeParticleSystem.PARTICLE, pos, 0.2, velocity))
+
 
 class Particle:
     def __init__(self, img, pos, gravity, velocity):
