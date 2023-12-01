@@ -14,7 +14,7 @@ class Entity(pg.sprite.Sprite):
     def scale_up(anm, index, scale_multiply):
         return pg.transform.scale(anm[index],
                                         (anm[index].get_width() * scale_multiply,
-                                         anm[index].get_height() * scale_multiply)).convert_alpha()
+                                         anm[index].get_height() * scale_multiply))
 
 
 class MoveableEntity(Entity):

@@ -6,7 +6,7 @@ from settings import *
 from camera import Camera
 from entity import Tile, Magic
 from player import Player
-from danger import Slime, Spike, Spiky
+from danger import Slime, Spike, Spiky, Grimskull
 from particles import ParticleSystem
 
 
@@ -15,6 +15,7 @@ class Map:
         self.rendered_entities = Camera()
         self.dangerous_entities = pg.sprite.Group()
         self.collidable_entities = pg.sprite.Group()
+        self.interactable_entities = pg.sprite.Group()
         self.magic_entities = pg.sprite.Group()
         self.collision = {"ground": self.collidable_entities,
                           "danger": self.dangerous_entities,
@@ -49,7 +50,12 @@ class Map:
                     Magic((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.magic_entities])
                 elif element == "q":
                     Spiky((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
+                elif element == "G":
+                    Grimskull((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities, self.interactable_entities], self.collision)
 
     def update(self, delta_time):
+        for sprite in self.interactable_entities.sprites():
+            sprite.instantiate_player(self.player)
+
         self.rendered_entities.update(delta_time)
         self.rendered_entities.render(delta_time, self.player)
