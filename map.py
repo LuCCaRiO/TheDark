@@ -11,7 +11,7 @@ from particles import ParticleSystem
 
 
 class Map:
-    def __init__(self):
+    def __init__(self, level):
         self.rendered_entities = Camera()
         self.dangerous_entities = pg.sprite.Group()
         self.collidable_entities = pg.sprite.Group()
@@ -23,7 +23,9 @@ class Map:
 
         self.player = None
 
-        self.create_level(self.read_csv("levels/level_1.csv"))
+        self.level = level
+
+        self.create_level(self.read_csv(level))
 
     @staticmethod
     def read_csv(file_name):

@@ -99,6 +99,9 @@ class Player(MoveableEntity):
                 PlayerParticleSystem(pos, (50, 50), self.groups()[0], 1, 4).start()
                 self.set_magic(self.magic - 10)
 
+    def restart(self):
+        self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
+
     def set_magic(self, value):
         if 0 > value:
             self.magic = 0
@@ -182,9 +185,6 @@ class Player(MoveableEntity):
             self.restart()
         else:
             self.health -= damage
-
-    def restart(self):
-        self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
 
     def knockback(self, sprite):
         knockback_direction = (self.pos.x - sprite.pos.x) / abs(self.pos.x - sprite.pos.x) + 0.01  # avoid division by zero

@@ -1,8 +1,7 @@
 import pygame as pg
-from map import Map
 from settings import *
 from user_interface import Light, HealthBar, MagicBar, UI
-
+from map import Map
 
 class Game:
     def __init__(self):
@@ -10,7 +9,7 @@ class Game:
         self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
                                            monitor_size.current_h), pg.FULLSCREEN)
 
-        self.map = Map()
+        self.map = Map("levels/level_1.csv")
 
         self.dark = None
         self.health_bar = None

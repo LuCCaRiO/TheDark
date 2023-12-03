@@ -33,6 +33,7 @@ class ParticleSystem(MoveableEntity):
     def delete_particles(self):
         for particle in self.particles:
             self.particles.remove(particle)
+            del particle
 
     def update(self, delta_time):
         self.delta_time = delta_time
@@ -42,7 +43,8 @@ class ParticleSystem(MoveableEntity):
 
         if self.timer > self.total_time * SECOND:
             self.delete_particles()
-            del self
+            self.groups().clear()
+            self.kill()
 
 
 class PlayerParticleSystem(ParticleSystem):

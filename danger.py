@@ -92,7 +92,7 @@ class Spike(Danger):
 
 class Spiky(Danger):
     SPIKY_IMAGE = pg.image.load("images/spikey.png")
-    DAMAGE = 50
+    DAMAGE = 15
     KNOCKBACK = 100
 
     def __init__(self, pos, groups):
