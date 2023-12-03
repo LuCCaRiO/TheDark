@@ -66,18 +66,18 @@ class MagicBar(Bar):
 
 
 class Light(UI):
-    def __init__(self, pos, groups, radius, player):
+    def __init__(self, pos, groups, radius, get_player):
         image = pg.Surface((radius * 2, radius * 2), pg.SRCALPHA)
         super(Light, self).__init__([image], pos, groups, 1)
-        self.player = player
+        self.player = get_player
         self.screen = pg.display.get_surface()
         self.delta_time = RELATION_DELTA_TIME
         self.timer = 0
         self.radius = radius
 
     def move(self):
-        self.pos.x = self.player.rect.centerx - Camera.instance.offset.x - self.image.get_width() // 2
-        self.pos.y = self.player.rect.centery - Camera.instance.offset.y - self.image.get_height() // 2
+        self.pos.x = self.player().rect.centerx - Camera.instance.offset.x - self.image.get_width() // 2
+        self.pos.y = self.player().rect.centery - Camera.instance.offset.y - self.image.get_height() // 2
         self.rect.x = round(self.pos.x)
         self.rect.y = round(self.pos.y)
 

@@ -13,7 +13,7 @@ class Player(MoveableEntity):
     IMMORTALITY = 1.5
     IMMORTALITY_FADE = 125
 
-    def __init__(self, pos, groups, collidable_sprites):
+    def __init__(self, pos, groups, collidable_sprites, map_instance):
         sprite_sheet = {"run": [pg.image.load("images/BlackSprite/blackSprite_0.png"),
                         pg.image.load("images/BlackSprite/blackSprite_1.png"),
                         pg.image.load("images/BlackSprite/blackSprite_2.png"),
@@ -42,10 +42,12 @@ class Player(MoveableEntity):
 
         self.animation_state = "run"
 
+        self.map_instance = map_instance
+
     def heal(self):
-        hp = ((self.delta_time // 2) / RELATION_DELTA_TIME)
-        if self.magic >= hp and self.health < 100:
-            self.set_magic(self.magic - hp * 2)
+        hp = (self.delta_time / RELATION_DELTA_TIME) * 0.66
+        if self.magic > 0 and self.health < 100:
+            self.set_magic(self.magic - hp * 1.5)
             self.set_health(self.health + hp)
             self.animation_state = "heal"
             Camera.instance.set_focus(True)
@@ -100,7 +102,7 @@ class Player(MoveableEntity):
                 self.set_magic(self.magic - 10)
 
     def restart(self):
-        self.__init__(self.start_pos, self.groups(), self.collidable_sprites)
+        self.map_instance.restart()
 
     def set_magic(self, value):
         if 0 > value:

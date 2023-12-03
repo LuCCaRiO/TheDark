@@ -67,6 +67,9 @@ class Game:
                         self.ability_on = False
                         self.time = NORMAL_TIME
 
+    def get_player(self):
+        return self.map.player
+
     def create_ui(self):
         screen_width, screen_height = self.screen.get_size()
 
@@ -74,7 +77,7 @@ class Game:
         dark.fill(NORMAL_COLOR)
 
         self.dark = UI([dark], (0, 0), [self.user_interface])
-        Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.map.player)
+        Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.get_player)
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])
         self.magic_bar = MagicBar((10, 100), [self.user_interface])

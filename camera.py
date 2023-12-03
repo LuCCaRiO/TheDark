@@ -34,7 +34,7 @@ class Camera(pg.sprite.Group):
                 self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
                 self.target_offset.y = pg.display.get_surface().get_height() // 3
 
-        factor = 0.14 * (delta_time / RELATION_DELTA_TIME)
+        factor = 0.1 * (delta_time / RELATION_DELTA_TIME)
 
         self.offset.x += round((self.target_offset.x - self.offset.x) * factor)
         self.offset.y += round((self.target_offset.y - self.offset.y) * factor)

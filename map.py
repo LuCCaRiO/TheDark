@@ -27,6 +27,11 @@ class Map:
 
         self.create_level(self.read_csv(level))
 
+    def restart(self):
+        for sprite in self.rendered_entities.sprites():
+            sprite.kill()
+        self.create_level(self.read_csv(self.level))
+
     @staticmethod
     def read_csv(file_name):
         level = []
@@ -45,7 +50,7 @@ class Map:
                 elif element == "d":
                     Spike((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
                 elif element == "p":
-                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision)
+                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision, self)
                 elif element == "s":
                     Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision)
                 elif element == "e":
