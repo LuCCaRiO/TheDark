@@ -76,7 +76,8 @@ class Light(UI):
         self.radius = radius
 
     def move(self):
-        self.pos.x = self.player().rect.centerx - Camera.instance.offset.x - self.image.get_width() // 2
+        distance = pg.math.Vector2((Camera.instance.offset.x - self.player().pos.x) * 2 + pg.display.get_surface().get_width(), 0)
+        self.pos.x = self.player().rect.centerx - Camera.instance.offset.x + distance.x - self.image.get_width() // 2
         self.pos.y = self.player().rect.centery - Camera.instance.offset.y - self.image.get_height() // 2
         self.rect.x = round(self.pos.x)
         self.rect.y = round(self.pos.y)

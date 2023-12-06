@@ -41,9 +41,11 @@ class Camera(pg.sprite.Group):
             self.offset.x = 0
         self.offset.y += round((self.target_offset.y - self.offset.y) * factor)
 
+        distance = pg.math.Vector2((self.offset.x - player.pos.x) * 2 + pg.display.get_surface().get_width(), 0)
+
         sprites = self.sort_algorithm()
         for sprite in sprites:
-            pg.display.get_surface().blit(sprite.image, sprite.rect.topleft - self.offset)
+            pg.display.get_surface().blit(sprite.image, sprite.rect.topleft - self.offset + distance)
 
     def sort_algorithm(self):
         sprites = []
