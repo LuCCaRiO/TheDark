@@ -17,12 +17,10 @@ class Player(MoveableEntity):
     HURT_SFX = pg.mixer.Sound("sfx/hitHurt (1).wav")
 
     def __init__(self, pos, groups, collidable_sprites, map_instance):
-        sprite_sheet = {"run": [pg.image.load("images/BlackSprite/blackSprite_0.png"),
-                        pg.image.load("images/BlackSprite/blackSprite_1.png"),
-                        pg.image.load("images/BlackSprite/blackSprite_2.png"),
-                        pg.image.load("images/BlackSprite/blackSprite_3.png")],
+        sprite_sheet = {"run": [pg.image.load("images/BlackSprite/BlackSprite0.png"),
+                        pg.image.load("images/BlackSprite/BlackSprite1.png")],
                         "fall": [pg.image.load("images/BlackSprite/falling.png")],
-                        "heal": [pg.image.load("images/BlackSprite/heal.png")]}
+                        "heal": [pg.image.load("images/BlackSprite/BlackSprite2.png")]}
 
         super(Player, self).__init__(sprite_sheet["run"], pos, groups)
         self.start_pos = pg.math.Vector2(pos)
@@ -58,7 +56,7 @@ class Player(MoveableEntity):
             Camera.instance.set_focus(False)
 
     def animation(self):
-        self.anm_index += self.delta_time * 0.008
+        self.anm_index += self.delta_time * 0.004
 
         if self.anm_index >= len(self.sprite_sheet[self.animation_state]) or self.direction.x == 0:
             self.anm_index = 0
