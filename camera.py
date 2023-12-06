@@ -32,13 +32,11 @@ class Camera(pg.sprite.Group):
                 self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
             else:
                 self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
-                self.target_offset.y = pg.display.get_surface().get_height() // 3
+                self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
 
         factor = 0.1 * (delta_time / RELATION_DELTA_TIME)
 
         self.offset.x += round((self.target_offset.x - self.offset.x) * factor)
-        if self.offset.x < 0:
-            self.offset.x = 0
         self.offset.y += round((self.target_offset.y - self.offset.y) * factor)
 
         distance = pg.math.Vector2((self.offset.x - player.pos.x) * 2 + pg.display.get_surface().get_width(), 0)
