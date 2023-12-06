@@ -37,6 +37,8 @@ class Camera(pg.sprite.Group):
         factor = 0.1 * (delta_time / RELATION_DELTA_TIME)
 
         self.offset.x += round((self.target_offset.x - self.offset.x) * factor)
+        if self.offset.x < 0:
+            self.offset.x = 0
         self.offset.y += round((self.target_offset.y - self.offset.y) * factor)
 
         sprites = self.sort_algorithm()

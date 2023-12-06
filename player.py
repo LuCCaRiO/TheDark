@@ -13,6 +13,9 @@ class Player(MoveableEntity):
     IMMORTALITY = 1.5
     IMMORTALITY_FADE = 125
 
+    DEATH_SFX = pg.mixer.Sound("sfx/hitHurt.wav")
+    HURT_SFX = pg.mixer.Sound("sfx/hitHurt (1).wav")
+
     def __init__(self, pos, groups, collidable_sprites, map_instance):
         sprite_sheet = {"run": [pg.image.load("images/BlackSprite/blackSprite_0.png"),
                         pg.image.load("images/BlackSprite/blackSprite_1.png"),
@@ -102,6 +105,7 @@ class Player(MoveableEntity):
                 self.set_magic(self.magic - 10)
 
     def restart(self):
+        Player.DEATH_SFX.play()
         self.map_instance.restart()
 
     def set_magic(self, value):
@@ -186,6 +190,7 @@ class Player(MoveableEntity):
         if damage >= self.health:
             self.restart()
         else:
+            Player.HURT_SFX.play()
             self.health -= damage
 
     def knockback(self, sprite):
