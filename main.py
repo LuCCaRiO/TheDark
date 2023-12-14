@@ -58,9 +58,9 @@ class Game:
                 pg.quit()
                 exit()
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_w:
-                    self.map.player.jump()
                 if event.key == pg.K_SPACE:
+                    self.map.player.jump()
+                if event.key == pg.K_e:
                     if not self.ability_on:
                         self.ability_on = True
                         self.time = ABILITY_TIME

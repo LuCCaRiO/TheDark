@@ -8,6 +8,7 @@ from entity import Tile, Magic
 from player import Player
 from danger import Slime, Spike, Spiky, Grimskull
 from particles import ParticleSystem
+from user_interface import UI
 
 
 class Map:
