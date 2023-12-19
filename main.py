@@ -60,7 +60,7 @@ class Game:
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.map.player.jump()
-                if event.key == pg.K_e:
+                if event.key == pg.K_LSHIFT:
                     if not self.ability_on:
                         self.ability_on = True
                         self.time = ABILITY_TIME

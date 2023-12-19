@@ -86,7 +86,7 @@ class Player(MoveableEntity):
         else:
             self.direction.x = 0
 
-        if keys[pg.K_q] and self.on_ground and self.direction.x == 0:
+        if keys[pg.K_LALT] and self.on_ground and self.direction.x == 0:
             self.heal()
         else:
             Camera.instance.set_focus(False)
