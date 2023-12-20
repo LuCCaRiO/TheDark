@@ -9,7 +9,7 @@ class Player(MoveableEntity):
     SPEED = 10
     GRAVITY = 0.7
     JUMP_FORCE = -11.5
-    DEATH_HEIGHT = 1200
+    DEATH_HEIGHT = 900
     IMMORTALITY = 1.5
     IMMORTALITY_FADE = 125
 

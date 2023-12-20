@@ -38,7 +38,7 @@ class Bar(UI):
 class HealthBar(Bar):
     BAR_IMAGE = pg.image.load("images/health_bar.png")
     BAR_EDGE_IMAGE = pg.image.load("images/health_bar_edge.png")
-    COLOR = (0, 100, 0, 100)
+    COLOR = (0, 120, 0, 200)
     HEIGHT = 64
 
     def __init__(self, pos, groups):
@@ -53,7 +53,7 @@ class HealthBar(Bar):
 class MagicBar(Bar):
     BAR_IMAGE = pg.image.load("images/ability_bar.png")
     BAR_EDGE_IMAGE = pg.image.load("images/ability_bar_edge.png")
-    COLOR = (138, 43, 226, 70)
+    COLOR = (95, 0, 183, 200)
     HEIGHT = 32
 
     def __init__(self, pos, groups):

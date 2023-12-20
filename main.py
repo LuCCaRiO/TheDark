@@ -26,17 +26,17 @@ class Game:
         clock = pg.time.Clock()
         while True:
             delta_time = clock.tick(FPS)
+            print(clock.get_fps())
             self.handle_events()
 
-            self.screen.fill((75, 75, 75))
+            if self.ability_on:
+                self.screen.fill(ABILITY_COLOR)
+            else:
+                self.screen.fill(NORMAL_COLOR)
+
             self.ability_mode(delta_time)
             delta_time *= self.time
             self.map.update(delta_time)
-
-            if self.ability_on:
-                self.dark.image.fill(ABILITY_COLOR)
-            else:
-                self.dark.image.fill(NORMAL_COLOR)
 
             self.user_interface.update(delta_time)
             self.health_bar.set_value(self.map.player.health)
@@ -74,11 +74,11 @@ class Game:
     def create_ui(self):
         screen_width, screen_height = self.screen.get_size()
 
-        dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
-        dark.fill(NORMAL_COLOR)
+        #dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
+        #dark.fill(NORMAL_COLOR)
 
-        self.dark = UI([dark], (0, 0), [self.user_interface])
-        Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.get_player)
+        #self.dark = UI([dark], (0, 0), [self.user_interface])
+        #Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.get_player)
 
         self.health_bar = HealthBar((10, 10), [self.user_interface])
         self.magic_bar = MagicBar((10, 100), [self.user_interface])
