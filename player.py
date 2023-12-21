@@ -14,7 +14,7 @@ class Player(MoveableEntity):
     IMMORTALITY_FADE = 125
 
     DEATH_SFX = pg.mixer.Sound("sfx/hitHurt.wav")
-    HURT_SFX = pg.mixer.Sound("sfx/hitHurt (1).wav")
+    HURT_SFX = pg.mixer.Sound("sfx/hit01.wav")
 
     def __init__(self, pos, groups, collidable_sprites, map_instance):
         sprite_sheet = {"run": [pg.image.load("images/BlackSprite/BlackSprite0.png"),
