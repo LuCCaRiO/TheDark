@@ -76,9 +76,9 @@ class Slime(Enemy):
         self.delta_time = delta_time
         self.mask = pg.mask.from_surface(self.image)
         self.detect_collision()
-        self.animation()
         self.move()
         self.create_particles()
+        self.animation()
 
 
 class Spike(Danger):

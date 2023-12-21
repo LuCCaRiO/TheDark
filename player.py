@@ -100,7 +100,7 @@ class Player(MoveableEntity):
                 self.allow_jump = False
                 pos = self.rect.center + pg.math.Vector2(self.image.get_width() // -2, 0)
                 PlayerParticleSystem(pos, (50, 50), self.groups()[0], 1, 4).start()
-                self.set_magic(self.magic - 10)
+                self.set_magic(self.magic - 7)
 
     def restart(self):
         Player.DEATH_SFX.play()

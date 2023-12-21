@@ -27,12 +27,12 @@ class Game:
         while True:
             delta_time = clock.tick(FPS)
             print(clock.get_fps())
-            self.handle_events()
-
             if self.ability_on:
                 self.screen.fill(ABILITY_COLOR)
             else:
                 self.screen.fill(NORMAL_COLOR)
+
+            self.handle_events()
 
             self.ability_mode(delta_time)
             delta_time *= self.time
