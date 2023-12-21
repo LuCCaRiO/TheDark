@@ -26,18 +26,19 @@ class Camera(pg.sprite.Group):
         self.focus = value
 
     def render(self, delta_time, player):
-        if player is not None:
-            if self.focus:
-                self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
-                self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
-            else:
-                self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
-                self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
+        self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
+        self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
 
         factor = 0.1 * (delta_time / RELATION_DELTA_TIME)
 
-        self.offset.x += round((self.target_offset.x - self.offset.x) * factor)
-        self.offset.y += round((self.target_offset.y - self.offset.y) * factor)
+        r_x = 0
+        r_y = 0
+        if self.focus:
+            r_x = random.randint(-5, 5)
+            r_y = random.randint(-5, 5)
+
+        self.offset.x += round((self.target_offset.x - self.offset.x) * factor) + r_x
+        self.offset.y += round((self.target_offset.y - self.offset.y) * factor) + r_y
 
         distance = pg.math.Vector2((self.offset.x - player.pos.x) * 2 + pg.display.get_surface().get_width(), 0)
 
