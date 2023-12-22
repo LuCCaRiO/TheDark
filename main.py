@@ -1,18 +1,21 @@
 import pygame as pg
 pg.mixer.init()
 from settings import *
-from user_interface import Light, HealthBar, MagicBar, UI
 from map import Map
+from user_interface import HealthBar, MagicBar, UI
+from camera import Camera
 
 class Game:
     def __init__(self):
+
         monitor_size = pg.display.Info()
         self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
                                            monitor_size.current_h), pg.FULLSCREEN)
 
-        self.map = Map("levels/level_0.csv")
+        self.camera_sprites = Camera()
 
-        self.dark = None
+        self.map = Map("levels/level_0.csv", self.camera_sprites)
+
         self.health_bar = None
         self.magic_bar = None
 
@@ -44,6 +47,10 @@ class Game:
             self.user_interface.draw(self.screen)
 
             pg.display.update()
+
+    def load_level(self, file):
+        self.map.kill()
+        self.map = Map(file, self.camera_sprites)
 
     def ability_mode(self, delta_time):
         if self.map.player.magic <= 0:
@@ -86,4 +93,9 @@ class Game:
 
 if __name__ == "__main__":
     pg.init()
-    Game().run()
+    game = Game()
+
+    from scene_loader import SceneLoader
+    SceneLoader(game)
+
+    game.run()

@@ -50,3 +50,19 @@ class Magic(MoveableEntity):
         self.timer += self.delta_time
         self.animation()
         self.move()
+
+
+class LevelPortal(MoveableEntity):
+    IMAGE = pg.image.load("images/end.png")
+
+    def __init__(self, pos, groups):
+        super(LevelPortal, self).__init__([LevelPortal.IMAGE], pos, groups)
+        self.timer = 0
+        self.mask = pg.mask.from_surface(self.image)
+
+    def update(self, delta_time):
+        self.delta_time = delta_time
+        self.timer += self.delta_time
+        self.pos.x += math.sin(self.timer / SECOND * 5)
+        self.pos.y += math.cos(self.timer / SECOND * 5)
+        self.rect.midbottom = self.pos

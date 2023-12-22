@@ -2,7 +2,9 @@ import pygame as pg
 from entity import MoveableEntity
 from particles import PlayerParticleSystem
 from camera import Camera
+from scene_loader import SceneLoader
 from settings import *
+from main import Game
 
 
 class Player(MoveableEntity):
@@ -169,20 +171,23 @@ class Player(MoveableEntity):
                     self.pos.y = self.hitbox.centery
 
     def detect_collision(self):
+        mask = pg.mask.from_surface(self.image)
         for sprite in self.collidable_sprites["magic"]:
-            mask = pg.mask.from_surface(self.image)
             if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
                 self.set_magic(self.magic + sprite.magic)
                 sprite.kill()
 
         for sprite in self.collidable_sprites["danger"]:
-            mask = pg.mask.from_surface(self.image)
             if mask.overlap(sprite.mask,
                                  (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)) \
                     and not self.immortal:
                 self.knockback(sprite)
                 self.immortal = True
                 self.damage(sprite.get_damage())
+
+        for sprite in self.collidable_sprites["level"]:
+            if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
+                SceneLoader.instance.load_level("levels/level_1.csv")
 
     def damage(self, damage):
         if damage >= self.health:

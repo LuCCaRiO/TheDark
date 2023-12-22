@@ -77,8 +77,10 @@ class Slime(Enemy):
         self.mask = pg.mask.from_surface(self.image)
         self.detect_collision()
         self.move()
-        self.create_particles()
         self.animation()
+
+        if len(self.groups()) > 0:
+            self.create_particles()
 
 
 class Spike(Danger):
