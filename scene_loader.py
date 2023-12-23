@@ -17,3 +17,6 @@ class SceneLoader:
 
     def load_level(self, file):
         self.game_instance.load_level(file)
+
+    def next_level(self):
+        self.game_instance.next_level()

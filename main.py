@@ -14,7 +14,9 @@ class Game:
 
         self.camera_sprites = Camera()
 
-        self.map = Map("levels/level_0.csv", self.camera_sprites)
+        self.level = 0
+
+        self.map = Map(f"levels/level_{self.level}.csv", self.camera_sprites)
 
         self.health_bar = None
         self.magic_bar = None
@@ -51,6 +53,11 @@ class Game:
     def load_level(self, file):
         self.map.kill()
         self.map = Map(file, self.camera_sprites)
+
+    def next_level(self):
+        self.level += 1
+        self.map.kill()
+        self.map = Map(f"levels/level_{self.level}.csv", self.camera_sprites)
 
     def ability_mode(self, delta_time):
         if self.map.player.magic <= 0:

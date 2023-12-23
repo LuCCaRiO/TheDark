@@ -15,7 +15,7 @@ class Player(MoveableEntity):
     IMMORTALITY = 1.5
     IMMORTALITY_FADE = 125
 
-    DEATH_SFX = pg.mixer.Sound("sfx/hitHurt.wav")
+    DEATH_SFX = pg.mixer.Sound("sfx/explosion.wav")
     HURT_SFX = pg.mixer.Sound("sfx/hit01.wav")
 
     def __init__(self, pos, groups, collidable_sprites, map_instance):
@@ -187,7 +187,7 @@ class Player(MoveableEntity):
 
         for sprite in self.collidable_sprites["level"]:
             if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
-                SceneLoader.instance.load_level("levels/level_1.csv")
+                SceneLoader.instance.next_level()
 
     def damage(self, damage):
         if damage >= self.health:
