@@ -8,10 +8,11 @@ from settings import *
 class Camera(pg.sprite.Group):
     instance = None
 
-    def __init__(self):
+    def __init__(self, display):
         self.singleton()
 
         super(Camera, self).__init__()
+        self.display = display
         self.offset = pg.math.Vector2()
         self.target_offset = pg.math.Vector2()
         self.focus = False
@@ -44,7 +45,7 @@ class Camera(pg.sprite.Group):
 
         sprites = self.sort_algorithm()
         for sprite in sprites:
-            pg.display.get_surface().blit(sprite.image, sprite.rect.topleft - self.offset + distance)
+            self.display.blit(sprite.image, sprite.rect.topleft - self.offset + distance)
 
     def sort_algorithm(self):
         sprites = []

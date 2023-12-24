@@ -55,20 +55,25 @@ class Map:
                 if str.isnumeric(element):
                     Tile([pg.image.load(f"images/Tiles/tiles{element}.png")],
                          (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.collidable_entities])
-                elif element == "d":
-                    Spike((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
-                elif element == "p":
-                    self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision, self)
-                elif element == "s":
-                    Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision)
-                elif element == "e":
-                    Magic((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.magic_entities])
-                elif element == "q":
-                    Spiky((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
-                elif element == "G":
-                    Grimskull((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities, self.interactable_entities], self.collision)
-                elif element == "B":
-                    LevelPortal((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.level_change_entities])
+                else:
+                    match element:
+                        case "d":
+                            Spike((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
+                        case "p":
+                            self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision, self)
+                        case "s":
+                            Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities],
+                                self.collision)
+                        case "e":
+                            Magic((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.magic_entities])
+                        case "q":
+                            Spiky((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities])
+                        case "G":
+                            Grimskull((j * TILE_SIZE, i * TILE_SIZE),
+                                    [self.rendered_entities, self.dangerous_entities, self.interactable_entities],
+                                    self.collision)
+                        case "B":
+                            LevelPortal((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.level_change_entities])
 
     def update(self, delta_time):
         for sprite in self.interactable_entities.sprites():
