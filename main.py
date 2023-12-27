@@ -1,7 +1,8 @@
+import moderngl
 import pygame as pg
 pg.mixer.init()
 
-import moderngl
+import sys
 import array
 
 from settings import *
@@ -15,7 +16,7 @@ class Game:
 
         monitor_size = pg.display.Info()
         self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
-                                           monitor_size.current_h), pg.OPENGL | pg.DOUBLEBUF)
+                                           monitor_size.current_h), pg.FULLSCREEN | pg.OPENGL | pg.DOUBLEBUF)
         self.display = pg.Surface((monitor_size.current_h * TARGET_ASPECT_RATIO,
                                    monitor_size.current_h))
         self.ctx = moderngl.create_context()
@@ -48,11 +49,21 @@ class Game:
         out vec4 f_color;
         
         void main() {
-            vec4 color = texture(tex, uvs);
-            vec2 pixel = vec2(1.0/448.0, 1.0/264.0); // assuming 512x512 texture size   14 8
-            vec2 coord = floor(uvs / pixel) * pixel;
-            vec4 new_color = texture(tex, coord);
-            f_color = vec4(new_color.rgb, color.a);
+            // Define the size of each "pixel"
+            vec2 pixelSize = vec2(1.0 / 300.0); // Adjust the size to control pixelation
+        
+            // Calculate the texture coordinates for the current fragment
+            vec2 coord = floor(uvs / pixelSize) * pixelSize + pixelSize * 0.5; // Adding half a pixel for centering
+        
+            // Perform bilinear filtering for smoother edges
+            vec4 color = texture(tex, coord) +
+                         texture(tex, coord + vec2(pixelSize.x, 0.0)) +
+                         texture(tex, coord + vec2(0.0, pixelSize.y)) +
+                         texture(tex, coord + pixelSize);
+            color /= 4.0; // Average the colors to achieve a basic form of anti-aliasing
+        
+            // Output the final color
+            f_color = color;
         }
         '''
 
@@ -132,7 +143,7 @@ class Game:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 pg.quit()
-                exit()
+                sys.exit()
             elif event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     self.map.player.jump()
@@ -148,14 +159,6 @@ class Game:
         return self.map.player
 
     def create_ui(self):
-        screen_width, screen_height = self.screen.get_size()
-
-        #dark = pg.Surface(self.screen.get_size(), pg.SRCALPHA)
-        #dark.fill(NORMAL_COLOR)
-
-        #self.dark = UI([dark], (0, 0), [self.user_interface])
-        #Light((screen_width // 2 - 200, 0), [self.user_interface], 200, self.get_player)
-
         self.health_bar = HealthBar((10, 10), [self.user_interface])
         self.magic_bar = MagicBar((10, 100), [self.user_interface])
 

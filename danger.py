@@ -36,12 +36,13 @@ class Slime(Enemy):
     SPEED = 3
     SPAWN_PARTICLE_TIME = 0.2
     
-    def __init__(self, pos, groups, collidable_sprites):
+    def __init__(self, pos, groups, collidable_sprites, camera):
         super(Slime, self).__init__([Slime.SLIME_IMAGE], pos, groups, Slime.DAMAGE)
         self.direction = pg.math.Vector2(1, 0)
         self.collidable_sprites = collidable_sprites
         self.flip = False
         self.particle_timer = 0
+        self.camera = camera
 
     def move(self):
         self.pos.x += self.direction.x * Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
@@ -70,7 +71,7 @@ class Slime(Enemy):
             self.particle_timer = 0
             pos = self.rect.center + pg.math.Vector2(0, 8) if self.direction.x < 0 else self.rect.midleft + pg.math.Vector2(-8, 8)
 
-            SlimeParticleSystem(pos, (50, 50), self.groups()[0], 3, 2).start()
+            SlimeParticleSystem(pos, (50, 50), self.camera, 3, 2).start()
 
     def update(self, delta_time):
         self.delta_time = delta_time

@@ -63,7 +63,7 @@ class Map:
                             self.player = Player((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities], self.collision, self)
                         case "s":
                             Slime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities],
-                                self.collision)
+                                self.collision, self.rendered_entities)
                         case "e":
                             Magic((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.magic_entities])
                         case "q":
