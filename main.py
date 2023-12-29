@@ -1,5 +1,7 @@
 import moderngl
 import pygame as pg
+
+pg.init()
 pg.mixer.init()
 
 import sys
@@ -9,16 +11,15 @@ from settings import *
 from map import Map
 from user_interface import HealthBar, MagicBar, UI
 from camera import Camera
+from cutscene import CutSceneManager, StoryCutScene
 
 
 class Game:
     def __init__(self):
-
-        monitor_size = pg.display.Info()
-        self.screen = pg.display.set_mode((monitor_size.current_h * TARGET_ASPECT_RATIO,
-                                           monitor_size.current_h), pg.FULLSCREEN | pg.OPENGL | pg.DOUBLEBUF)
-        self.display = pg.Surface((monitor_size.current_h * TARGET_ASPECT_RATIO,
-                                   monitor_size.current_h))
+        self.screen = pg.display.set_mode((WIDTH,
+                                           HEIGHT), pg.FULLSCREEN | pg.OPENGL | pg.DOUBLEBUF)
+        self.display = pg.Surface((WIDTH,
+                                   HEIGHT))
         self.ctx = moderngl.create_context()
         quad_buffer = self.ctx.buffer(data=array.array('f', [
             -1.0, 1.0, 0.0, 0.0,
@@ -74,6 +75,15 @@ class Game:
 
         self.level = 0
 
+        self.cut_scene_manager = CutSceneManager(self.display)
+        story_cut_scene = StoryCutScene()
+        self.cut_scene_manager.start_cut_scene(story_cut_scene)
+        #story_cut_scene.end()  # end the cutscene
+        #self.cut_scene_manager.end_cut_scene()
+
+        #music = pg.mixer.Sound("music/revenge.wav")
+        #pg.mixer.Sound.play(music)
+
         self.map = Map(f"levels/level_{self.level}.csv", self.camera_sprites)
 
         self.health_bar = None
@@ -98,21 +108,26 @@ class Game:
         while True:
             delta_time = clock.tick(FPS)
             print(clock.get_fps())
-            if self.ability_on:
-                self.display.fill(ABILITY_COLOR)
-            else:
-                self.display.fill(NORMAL_COLOR)
 
             self.handle_events()
+            if not self.cut_scene_manager.cut_scene_running:
+                if self.ability_on:
+                    self.display.fill(ABILITY_COLOR)
+                else:
+                    self.display.fill(NORMAL_COLOR)
 
-            self.ability_mode(delta_time)
-            delta_time *= self.time
-            self.map.update(delta_time)
+                self.ability_mode(delta_time)
+                delta_time *= self.time
+                self.map.update(delta_time)
 
-            self.user_interface.update(delta_time)
-            self.health_bar.set_value(self.map.player.health)
-            self.magic_bar.set_value(self.map.player.magic)
-            self.user_interface.draw(self.display)
+                self.user_interface.update(delta_time)
+                self.health_bar.set_value(self.map.player.health)
+                self.magic_bar.set_value(self.map.player.magic)
+                self.user_interface.draw(self.display)
+            else:
+                self.display.fill(NORMAL_COLOR)
+                self.cut_scene_manager.update(delta_time)
+                self.cut_scene_manager.draw()
 
             frame_tex = Game.surf_to_tex(self.ctx, self.display)
             frame_tex.use(0)
@@ -164,7 +179,6 @@ class Game:
 
 
 if __name__ == "__main__":
-    pg.init()
     game = Game()
 
     from scene_loader import SceneLoader
