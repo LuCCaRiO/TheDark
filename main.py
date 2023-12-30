@@ -73,13 +73,13 @@ class Game:
 
         self.camera_sprites = Camera(self.display)
 
-        self.level = 0
+        self.level = 2
 
         self.cut_scene_manager = CutSceneManager(self.display)
         story_cut_scene = StoryCutScene()
         self.cut_scene_manager.start_cut_scene(story_cut_scene)
-        #story_cut_scene.end()  # end the cutscene
-        #self.cut_scene_manager.end_cut_scene()
+        story_cut_scene.end()  # end the cutscene
+        self.cut_scene_manager.end_cut_scene()
 
         #music = pg.mixer.Sound("music/revenge.wav")
         #pg.mixer.Sound.play(music)

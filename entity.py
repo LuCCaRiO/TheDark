@@ -33,7 +33,7 @@ class Magic(MoveableEntity):
 
     def __init__(self, pos, groups):
         super(Magic, self).__init__([Magic.IMAGE], pos, groups, 6)
-        self.pos.x += (Magic.IMAGE.get_width() * (TILE_SIZE // 8) - self.image.get_width()) // 2
+        self.pos.x += (TILE_SIZE // 2) - (self.image.get_width()) // 2
         self.mask = pg.mask.from_surface(self.image)
         self.timer = 0
         self.magic = 50

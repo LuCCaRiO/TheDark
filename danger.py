@@ -52,9 +52,9 @@ class Slime(Enemy):
         for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.rect):
                 if self.direction.x > 0:
-                    self.rect.right = sprite.rect.left - self.direction.x * Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
+                    self.rect.right = sprite.rect.left - Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
                 else:
-                    self.rect.left = sprite.rect.right + self.direction.x * Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
+                    self.rect.left = sprite.rect.right + Slime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
                 self.direction.x *= -1
 
     def animation(self):
@@ -80,8 +80,49 @@ class Slime(Enemy):
         self.move()
         self.animation()
 
-        if len(self.groups()) > 0:
+        if len(self.groups()) > 1:
             self.create_particles()
+
+
+class ShellSlime(Enemy):
+    IMAGE = pg.image.load("images/shell_slime.png")
+    DAMAGE = 50
+    KNOCKBACK = 60
+    SPEED = 18
+
+    def __init__(self, pos, groups, collidable_sprites):
+        super(ShellSlime, self).__init__([ShellSlime.IMAGE], pos, groups, ShellSlime.DAMAGE)
+
+        self.direction = pg.math.Vector2(-1, 0)
+        self.collidable_sprites = collidable_sprites
+        self.dead = False
+        self.angle = 0
+
+    def move(self):
+        self.pos.x += self.direction.x * ShellSlime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
+        self.rect.x = round(self.pos.x)
+        if not self.dead:
+            self.collision()
+        self.pos.y += self.direction.y * (self.delta_time / RELATION_DELTA_TIME)
+        self.rect.y = round(self.pos.y)
+
+    def collision(self):
+        for sprite in self.collidable_sprites["ground"]:
+            if self.rect.colliderect(sprite.rect):
+                self.dead = True
+                self.direction.y = -10
+                self.direction.x = 0
+
+    def death(self):
+        self.angle += (self.delta_time / RELATION_DELTA_TIME) * 3
+        self.image = pg.transform.rotate(self.scale_up([ShellSlime.IMAGE], 0, 10), self.angle)
+        self.direction.y += (self.delta_time / RELATION_DELTA_TIME)
+
+    def update(self, delta_time):
+        self.delta_time = delta_time
+        self.move()
+        if self.dead:
+            self.death()
 
 
 class Spike(Danger):

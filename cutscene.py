@@ -67,7 +67,7 @@ class StoryCutScene(CutScene):
             self.text("that this was the underworld's king", (0, 50))
         elif time_in_seconds > 10:
             self.surface.blit(image, image_pos)
-            self.text("None thought anything of it", (0, 0))
+            self.text("Nobody thought anything of it", (0, 0))
         elif time_in_seconds > 5:
             self.surface.blit(image, image_pos)
             self.text("A mysterious individual with", (0, -20))
