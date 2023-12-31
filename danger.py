@@ -89,7 +89,7 @@ class ShellSlime(Enemy):
     DAMAGE = 50
     KNOCKBACK = 60
     SPEED = 18
-    DEATH_HEIGHT = 900
+    DEATH_HEIGHT = 1200
 
     def __init__(self, pos, groups, collidable_sprites, camera):
         super(ShellSlime, self).__init__([ShellSlime.IMAGE], pos, groups, ShellSlime.DAMAGE)
@@ -117,7 +117,7 @@ class ShellSlime(Enemy):
                 self.direction.y = -10
                 self.direction.x = 0
                 self.image_copy.set_alpha(170)
-                self.groups()[1].remove(self)
+                self.groups()[self.groups().index(self.collidable_sprites["danger"])].remove(self)
 
     def death(self):
         self.angle += (self.delta_time / RELATION_DELTA_TIME) * 3

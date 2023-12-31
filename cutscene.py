@@ -64,8 +64,8 @@ class StoryCutScene(CutScene):
             self.text("to defeat the underworld's king", (0, 50), self.surface)
         elif time_in_seconds > 25:
             self.surface.blit(dark_image, dark_image_pos)
-            self.text("These creatures are", (0, -20), self.surface)
-            self.text("using mana to live", (0, 50), self.surface)
+            self.text("Until everyone", (0, -20), self.surface)
+            self.text("was transformed", (0, 50), self.surface)
         elif time_in_seconds > 20.5:
             self.surface.blit(dark_image, dark_image_pos)
             self.text("He started to transform people", (0, -20), self.surface)

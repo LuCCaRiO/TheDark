@@ -18,16 +18,17 @@ class Player(MoveableEntity):
     DEATH_SFX = pg.mixer.Sound("sfx/explosion.wav")
     HURT_SFX = pg.mixer.Sound("sfx/hit01.wav")
 
-    def __init__(self, pos, groups, collidable_sprites, map_instance):
-        sprite_sheet = {"run": [pg.image.load("images/BlackSprite/BlackSprite0.png"),
-                        pg.image.load("images/BlackSprite/BlackSprite1.png")],
-                        "fall": [pg.image.load("images/BlackSprite/falling.png")],
-                        "heal": [pg.image.load("images/BlackSprite/BlackSprite2.png")]}
+    IMAGES = {"run": [pg.image.load("images/BlackSprite/BlackSprite0.png"),
+                      pg.image.load("images/BlackSprite/BlackSprite1.png")],
+              "idle": [pg.image.load("images/BlackSprite/BlackSprite0.png")],
+              "fall": [pg.image.load("images/BlackSprite/falling.png")],
+              "heal": [pg.image.load("images/BlackSprite/BlackSprite2.png")],
+              "sleep": [pg.image.load("images/BlackSprite/player_sleeping.png")]}
 
-        super(Player, self).__init__(sprite_sheet["run"], pos, groups)
+    def __init__(self, pos, groups, collidable_sprites, map_instance):
+        super(Player, self).__init__(Player.IMAGES["run"], pos, groups)
         self.start_pos = pg.math.Vector2(pos)
         self.anm_index = 0
-        self.sprite_sheet = sprite_sheet
 
         self.direction = pg.math.Vector2()
         self.flipped = False
@@ -43,7 +44,7 @@ class Player(MoveableEntity):
         self.immortality_timer = 0
         self.immortal = False
 
-        self.animation_state = "run"
+        self.animation_state = "idle"
 
         self.map_instance = map_instance
 
@@ -60,14 +61,14 @@ class Player(MoveableEntity):
     def animation(self):
         self.anm_index += self.delta_time * 0.004
 
-        if self.anm_index >= len(self.sprite_sheet[self.animation_state]) or self.direction.x == 0:
+        if self.anm_index >= len(Player.IMAGES[self.animation_state]):
             self.anm_index = 0
 
         if self.animation_state != "heal" and not self.on_ground:
             self.animation_state = "fall"
             self.anm_index = 0
 
-        self.image = Player.scale_up(self.sprite_sheet[self.animation_state], int(self.anm_index), TILE_SIZE / 8)
+        self.image = Player.scale_up(Player.IMAGES[self.animation_state], int(self.anm_index), TILE_SIZE / 8)
 
         if self.direction.x < 0 or self.flipped:
             self.image = pg.transform.flip(self.image, True, False)
@@ -80,13 +81,15 @@ class Player(MoveableEntity):
 
     def input(self):
         keys = pg.key.get_pressed()
-        self.animation_state = "run"
         if keys[pg.K_a]:
             self.direction.x = -1
+            self.animation_state = "run"
         elif keys[pg.K_d]:
             self.direction.x = 1
+            self.animation_state = "run"
         else:
             self.direction.x = 0
+            self.animation_state = "idle"
 
         if keys[pg.K_LALT] and self.on_ground and self.direction.x == 0:
             self.heal()
@@ -181,6 +184,7 @@ class Player(MoveableEntity):
             if mask.overlap(sprite.mask,
                                  (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)) \
                     and not self.immortal:
+                print(sprite.__class__)
                 self.knockback(sprite)
                 self.immortal = True
                 self.damage(sprite.get_damage())

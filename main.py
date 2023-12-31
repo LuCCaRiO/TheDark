@@ -57,7 +57,7 @@ class Game:
             vec2 coord = floor(uvs / pixelSize) * pixelSize + pixelSize * 0.5; // Adding half a pixel for centering
         
             // Perform bilinear filtering for smoother edges
-            vec4 color = vec4(0.0);
+            vec4 color = vec4(0);
             int samples = 0; // Counter for the number of samples taken
         
             // Increase the range for sampling by considering a larger area
@@ -80,9 +80,9 @@ class Game:
         self.program = self.ctx.program(vertex_shader=vert_shader, fragment_shader=frag_shader)
         self.render_object = self.ctx.vertex_array(self.program, [(quad_buffer, "2f 2f", "vert", "texcoord")])
 
-        self.camera_sprites = Camera(self.display)
+        self.camera = Camera(self.display)
 
-        self.level = 2
+        self.level = 0
 
         self.cut_scene_manager = CutSceneManager(self.display)
         story_cut_scene = StoryCutScene()
@@ -90,16 +90,15 @@ class Game:
         #story_cut_scene.end()  # end the cutscene
         #self.cut_scene_manager.end_cut_scene()
 
-        #music = pg.mixer.Sound("music/revenge.wav")
-        #pg.mixer.Sound.play(music)
-
-        self.map = Map(f"levels/level_{self.level}.csv", self.camera_sprites)
+        self.map = Map(f"levels/level_{self.level}.csv", self.camera)
 
         self.health_bar = None
         self.magic_bar = None
 
         self.time = NORMAL_TIME
         self.ability_on = False
+
+        self.start_music = False
 
         self.user_interface = pg.sprite.Group()
         self.create_ui()
@@ -117,6 +116,8 @@ class Game:
         while True:
             delta_time = clock.tick(FPS)
             print(clock.get_fps())
+
+            self.start_music = self.cut_scene_manager.cut_scene_running
 
             self.handle_events()
             if not self.cut_scene_manager.cut_scene_running:
@@ -149,12 +150,15 @@ class Game:
 
     def load_level(self, file):
         self.map.kill()
-        self.map = Map(file, self.camera_sprites)
+        self.map = Map(file, self.camera)
+        player = self.map.player
+        x = player.pos.x - pg.display.get_surface().get_width() // 2
+        y = player.pos.y - pg.display.get_surface().get_height() // 2
+        self.camera.offset = pg.math.Vector2(x, y)
 
     def next_level(self):
         self.level += 1
-        self.map.kill()
-        self.map = Map(f"levels/level_{self.level}.csv", self.camera_sprites)
+        self.load_level(f"levels/level_{self.level}.csv")
 
     def ability_mode(self, delta_time):
         if self.map.player.magic <= 0:
