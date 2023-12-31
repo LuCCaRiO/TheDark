@@ -51,21 +51,30 @@ class Game:
         
         void main() {
             // Define the size of each "pixel"
-            vec2 pixelSize = vec2(1.0 / 300.0); // Adjust the size to control pixelation
+            vec2 pixelSize = vec2(1.0 / 360.0); // Adjust the size to control pixelation
         
             // Calculate the texture coordinates for the current fragment
             vec2 coord = floor(uvs / pixelSize) * pixelSize + pixelSize * 0.5; // Adding half a pixel for centering
         
             // Perform bilinear filtering for smoother edges
-            vec4 color = texture(tex, coord) +
-                         texture(tex, coord + vec2(pixelSize.x, 0.0)) +
-                         texture(tex, coord + vec2(0.0, pixelSize.y)) +
-                         texture(tex, coord + pixelSize);
-            color /= 4.0; // Average the colors to achieve a basic form of anti-aliasing
+            vec4 color = vec4(0.0);
+            int samples = 0; // Counter for the number of samples taken
+        
+            // Increase the range for sampling by considering a larger area
+            for (float x = -1.0; x <= 1.0; x += 1.0) {
+                for (float y = -1.0; y <= 1.0; y += 1.0) {
+                    vec2 sampleCoord = coord + pixelSize * vec2(x, y);
+                    color += texture(tex, sampleCoord);
+                    samples++;
+                }
+            }
+        
+            color /= float(samples); // Average the colors based on the number of samples taken
         
             // Output the final color
             f_color = color;
         }
+
         '''
 
         self.program = self.ctx.program(vertex_shader=vert_shader, fragment_shader=frag_shader)
@@ -78,8 +87,8 @@ class Game:
         self.cut_scene_manager = CutSceneManager(self.display)
         story_cut_scene = StoryCutScene()
         self.cut_scene_manager.start_cut_scene(story_cut_scene)
-        story_cut_scene.end()  # end the cutscene
-        self.cut_scene_manager.end_cut_scene()
+        #story_cut_scene.end()  # end the cutscene
+        #self.cut_scene_manager.end_cut_scene()
 
         #music = pg.mixer.Sound("music/revenge.wav")
         #pg.mixer.Sound.play(music)
@@ -152,7 +161,7 @@ class Game:
             self.ability_on = False
             self.time = NORMAL_TIME
         elif self.ability_on:
-            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME) * 0.33)
+            self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME) * 0.15)
 
     def handle_events(self):
         for event in pg.event.get():

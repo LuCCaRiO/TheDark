@@ -32,6 +32,8 @@ class StoryCutScene(CutScene):
     def __init__(self):
         super(StoryCutScene, self).__init__()
         self.surface = pg.Surface((WIDTH, HEIGHT))
+        self.timer = 0
+        self.alpha = 255
 
     def start(self):
         pg.mixer.Sound.play(StoryCutScene.MUSIC)
@@ -46,39 +48,46 @@ class StoryCutScene(CutScene):
         dark_image_pos = (image_pos[0], self.timer / 100 - HEIGHT * 0.66)
         time_in_seconds = self.timer / SECOND
 
-        if time_in_seconds > 33:
+        if time_in_seconds > 35:
+            surface = pg.Surface((self.surface.get_width(), self.surface.get_height())).convert()
+            surface.blit(dark_image, dark_image_pos)
+            self.text("You are our only hope", (0, 0), surface)
+            surface.set_alpha(self.alpha)
+            self.alpha -= (RELATION_DELTA_TIME / self.delta_time) * 4
+            self.surface.blit(surface, (0, 0))
+        elif time_in_seconds > 33:
             self.surface.blit(dark_image, dark_image_pos)
-            self.text("You are our only hope", (0, 0))
+            self.text("You are our only hope", (0, 0), self.surface)
         elif time_in_seconds > 28:
             self.surface.blit(dark_image, dark_image_pos)
-            self.text("You survived as the chosen one", (0, -20))
-            self.text("to defeat the underworld's king", (0, 50))
+            self.text("You survived as the chosen one", (0, -20), self.surface)
+            self.text("to defeat the underworld's king", (0, 50), self.surface)
         elif time_in_seconds > 25:
             self.surface.blit(dark_image, dark_image_pos)
-            self.text("These creatures are", (0, -20))
-            self.text("using mana to live", (0, 50))
+            self.text("These creatures are", (0, -20), self.surface)
+            self.text("using mana to live", (0, 50), self.surface)
         elif time_in_seconds > 20.5:
             self.surface.blit(dark_image, dark_image_pos)
-            self.text("He started to transform people", (0, -20))
-            self.text("into creatures", (0, 50))
+            self.text("He started to transform people", (0, -20), self.surface)
+            self.text("into creatures", (0, 50), self.surface)
         elif time_in_seconds > 15:
             self.surface.blit(image, image_pos)
-            self.text("But no one had any idea", (0, -20))
-            self.text("that this was the underworld's king", (0, 50))
+            self.text("But no one had any idea", (0, -20), self.surface)
+            self.text("that this was the underworld's king", (0, 50), self.surface)
         elif time_in_seconds > 10:
             self.surface.blit(image, image_pos)
-            self.text("Nobody thought anything of it", (0, 0))
+            self.text("Nobody thought anything of it", (0, 0), self.surface)
         elif time_in_seconds > 5:
             self.surface.blit(image, image_pos)
-            self.text("A mysterious individual with", (0, -20))
-            self.text("shining eyes was spotted", (0, 50))
+            self.text("A mysterious individual with", (0, -20), self.surface)
+            self.text("shining eyes was spotted", (0, 50), self.surface)
         else:
             self.surface.blit(image, image_pos)
-            self.text("Once in a dark night...", (0, 0))
+            self.text("Once in a dark night...", (0, 0), self.surface)
 
-        return  self.timer / SECOND > 36
+        return  self.timer / SECOND > 37
 
-    def text(self, text, pos):
+    def text(self, text, pos, surface):
         text_surface = StoryCutScene.FONT.render(text, False, (255, 255, 255))
         x_pos = (WIDTH // 2) - text_surface.get_width() // 2
         y_pos = (HEIGHT // 2) - text_surface.get_height() // 2
@@ -86,7 +95,7 @@ class StoryCutScene(CutScene):
         actual_y = y_pos + pos[1]
 
         if 0 <= actual_x <= WIDTH - text_surface.get_width() and 0 <= actual_y <= HEIGHT - text_surface.get_height():
-            self.surface.blit(text_surface, (actual_x, actual_y))
+            surface.blit(text_surface, (actual_x, actual_y))
 
     def update(self, delta_time):
         self.delta_time = delta_time

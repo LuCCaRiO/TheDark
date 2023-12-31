@@ -26,6 +26,9 @@ class Camera(pg.sprite.Group):
     def set_focus(self, value):
         self.focus = value
 
+    def get_target_offset(self):
+        return self.target_offset
+
     def render(self, delta_time, player):
         self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
         self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2

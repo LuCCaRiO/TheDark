@@ -75,7 +75,7 @@ class Map:
                         case "B":
                             LevelPortal((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.level_change_entities])
                         case "h":
-                            ShellSlime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision)
+                            ShellSlime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision, self.rendered_entities)
 
     def update(self, delta_time):
         for sprite in self.interactable_entities.sprites():

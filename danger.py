@@ -85,18 +85,22 @@ class Slime(Enemy):
 
 
 class ShellSlime(Enemy):
-    IMAGE = pg.image.load("images/shell_slime.png")
+    IMAGE = pg.image.load("images/shell_slime.png").convert_alpha()
     DAMAGE = 50
     KNOCKBACK = 60
     SPEED = 18
+    DEATH_HEIGHT = 900
 
-    def __init__(self, pos, groups, collidable_sprites):
+    def __init__(self, pos, groups, collidable_sprites, camera):
         super(ShellSlime, self).__init__([ShellSlime.IMAGE], pos, groups, ShellSlime.DAMAGE)
 
         self.direction = pg.math.Vector2(-1, 0)
         self.collidable_sprites = collidable_sprites
         self.dead = False
         self.angle = 0
+        self.camera = camera
+        self.moving = False
+        self.image_copy = self.image
 
     def move(self):
         self.pos.x += self.direction.x * ShellSlime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
@@ -112,17 +116,24 @@ class ShellSlime(Enemy):
                 self.dead = True
                 self.direction.y = -10
                 self.direction.x = 0
+                self.image_copy.set_alpha(170)
+                self.groups()[1].remove(self)
 
     def death(self):
         self.angle += (self.delta_time / RELATION_DELTA_TIME) * 3
-        self.image = pg.transform.rotate(self.scale_up([ShellSlime.IMAGE], 0, 10), self.angle)
+        self.image = pg.transform.rotate(self.image_copy, self.angle)
         self.direction.y += (self.delta_time / RELATION_DELTA_TIME)
+        if self.pos.y > ShellSlime.DEATH_HEIGHT:
+            self.kill()
 
     def update(self, delta_time):
         self.delta_time = delta_time
-        self.move()
-        if self.dead:
-            self.death()
+        if (self.camera.get_target_offset().x + WIDTH) >= self.rect.left - TILE_SIZE:
+            self.moving = True
+        if self.moving:
+            self.move()
+            if self.dead:
+                self.death()
 
 
 class Spike(Danger):
