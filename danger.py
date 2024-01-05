@@ -87,7 +87,7 @@ class Slime(Enemy):
 class ShellSlime(Enemy):
     IMAGE = pg.image.load("images/shell_slime.png").convert_alpha()
     DAMAGE = 50
-    KNOCKBACK = 60
+    KNOCKBACK = 100
     SPEED = 18
     DEATH_HEIGHT = 1200
 

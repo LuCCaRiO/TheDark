@@ -9,7 +9,7 @@ import array
 
 from settings import *
 from map import Map
-from user_interface import HealthBar, MagicBar, UI
+from user_interface import HealthBar, MagicBar, UI, Dialogue
 from camera import Camera
 from cutscene import CutSceneManager, StoryCutScene
 
@@ -51,13 +51,13 @@ class Game:
         
         void main() {
             // Define the size of each "pixel"
-            vec2 pixelSize = vec2(1.0 / 360.0); // Adjust the size to control pixelation
+            vec2 pixelSize = vec2(1.0 / 400.0); // Adjust the size to control pixelation
         
             // Calculate the texture coordinates for the current fragment
             vec2 coord = floor(uvs / pixelSize) * pixelSize + pixelSize * 0.5; // Adding half a pixel for centering
         
             // Perform bilinear filtering for smoother edges
-            vec4 color = vec4(0);
+            vec4 color = vec4(-0.2);
             int samples = 0; // Counter for the number of samples taken
         
             // Increase the range for sampling by considering a larger area
@@ -82,23 +82,22 @@ class Game:
 
         self.camera = Camera(self.display)
 
-        self.level = 0
+        self.level = 2
 
         self.cut_scene_manager = CutSceneManager(self.display)
-        story_cut_scene = StoryCutScene()
-        self.cut_scene_manager.start_cut_scene(story_cut_scene)
-        #story_cut_scene.end()  # end the cutscene
-        #self.cut_scene_manager.end_cut_scene()
+        #story_cut_scene = StoryCutScene()
+        #self.cut_scene_manager.start_cut_scene(story_cut_scene)
 
         self.map = Map(f"levels/level_{self.level}.csv", self.camera)
 
         self.health_bar = None
         self.magic_bar = None
+        self.dialogue = None
 
         self.time = NORMAL_TIME
         self.ability_on = False
 
-        self.start_music = False
+        self.pause = False
 
         self.user_interface = pg.sprite.Group()
         self.create_ui()
@@ -117,8 +116,6 @@ class Game:
             delta_time = clock.tick(FPS)
             print(clock.get_fps())
 
-            self.start_music = self.cut_scene_manager.cut_scene_running
-
             self.handle_events()
             if not self.cut_scene_manager.cut_scene_running:
                 if self.ability_on:
@@ -128,7 +125,13 @@ class Game:
 
                 self.ability_mode(delta_time)
                 delta_time *= self.time
-                self.map.update(delta_time)
+
+                if self.dialogue.running:
+                    self.pause = True
+                else:
+                    self.pause = False
+
+                self.map.update(delta_time, self.pause)
 
                 self.user_interface.update(delta_time)
                 self.health_bar.set_value(self.map.player.health)
@@ -150,11 +153,8 @@ class Game:
 
     def load_level(self, file):
         self.map.kill()
+        self.camera.offset = pg.math.Vector2(0, 0)
         self.map = Map(file, self.camera)
-        player = self.map.player
-        x = player.pos.x - pg.display.get_surface().get_width() // 2
-        y = player.pos.y - pg.display.get_surface().get_height() // 2
-        self.camera.offset = pg.math.Vector2(x, y)
 
     def next_level(self):
         self.level += 1
@@ -189,6 +189,7 @@ class Game:
     def create_ui(self):
         self.health_bar = HealthBar((10, 10), [self.user_interface])
         self.magic_bar = MagicBar((10, 100), [self.user_interface])
+        self.dialogue = Dialogue(["Where am I?", "Who am I?"], (0, 0), [self.user_interface])
 
 
 if __name__ == "__main__":

@@ -81,10 +81,10 @@ class Player(MoveableEntity):
 
     def input(self):
         keys = pg.key.get_pressed()
-        if keys[pg.K_a]:
+        if keys[pg.K_a] and not keys[pg.K_d]:
             self.direction.x = -1
             self.animation_state = "run"
-        elif keys[pg.K_d]:
+        elif keys[pg.K_d] and not keys[pg.K_a]:
             self.direction.x = 1
             self.animation_state = "run"
         else:

@@ -53,7 +53,7 @@ class StoryCutScene(CutScene):
             surface.blit(dark_image, dark_image_pos)
             self.text("You are our only hope", (0, 0), surface)
             surface.set_alpha(self.alpha)
-            self.alpha -= (RELATION_DELTA_TIME / self.delta_time) * 4
+            self.alpha -= (self.delta_time / RELATION_DELTA_TIME) * 4
             self.surface.blit(surface, (0, 0))
         elif time_in_seconds > 33:
             self.surface.blit(dark_image, dark_image_pos)
@@ -76,10 +76,10 @@ class StoryCutScene(CutScene):
             self.text("that this was the underworld's king", (0, 50), self.surface)
         elif time_in_seconds > 10:
             self.surface.blit(image, image_pos)
-            self.text("Nobody thought anything of it", (0, 0), self.surface)
+            self.text("People were scared", (0, 0), self.surface)
         elif time_in_seconds > 5:
             self.surface.blit(image, image_pos)
-            self.text("A mysterious individual with", (0, -20), self.surface)
+            self.text("A mysterious figure with", (0, -20), self.surface)
             self.text("shining eyes was spotted", (0, 50), self.surface)
         else:
             self.surface.blit(image, image_pos)

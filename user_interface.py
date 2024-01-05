@@ -1,3 +1,5 @@
+import math
+
 import pygame as pg
 import math as mt
 from entity import Entity
@@ -93,3 +95,60 @@ class Light(UI):
         self.timer += delta_time
         self.move()
         self.draw()
+
+
+class Dialogue(Entity):
+    IMAGE = pg.transform.scale(pg.image.load("images/dialogue.png"), (WIDTH // 1.5, 300))
+    CONTINUE_IMAGE = pg.transform.scale(pg.image.load("images/continue.png"), (50, 50))
+    FONT = pg.font.SysFont("joystixmonospaceregular", 50)
+
+    def __init__(self, text, pos, groups):
+        super(Dialogue, self).__init__([Dialogue.IMAGE], pos, groups)
+        self.surface = pg.Surface((Dialogue.IMAGE.get_width(), Dialogue.IMAGE.get_height()), pg.SRCALPHA)
+        self.rect.topleft = (WIDTH // 2 - Dialogue.IMAGE.get_width() // 2, HEIGHT - Dialogue.IMAGE.get_height())
+        self.text = text
+        self.text_index = 0
+        self.element = 0
+        self.delta_time = RELATION_DELTA_TIME
+        self.pressed = False
+        self.timer = 0
+        self.running = True
+
+    def render_text(self, text):
+        output = ""
+        for element in range(int(self.element)):
+            output += text[element]
+
+        rendered_text = Dialogue.FONT.render(output, False, (0, 0, 0))
+        self.surface.blit(rendered_text, (Dialogue.IMAGE.get_width() // 2 - rendered_text.get_width() // 2, self.surface.get_height() // 2 - rendered_text.get_height() // 2))
+
+    def input(self):
+        keys = pg.key.get_pressed()
+        if not self.pressed and keys[pg.K_SPACE]:
+            self.pressed = True
+            if self.text_index < len(self.text) - 1:
+                self.text_index += 1
+                self.element = 0
+            else:
+                self.kill()
+                self.running = False
+        elif self.pressed and not keys[pg.K_SPACE]:
+            self.pressed = False
+
+    def update(self, delta_time):
+        self.delta_time = delta_time
+        self.timer += self.delta_time
+
+        if self.element <= len(self.text[self.text_index]):
+            self.element += (self.delta_time / RELATION_DELTA_TIME) * 0.3
+
+        self.input()
+        self.surface.blit(Dialogue.IMAGE, (0, 0))
+        self.render_text(self.text[self.text_index])
+
+        c_img = Dialogue.CONTINUE_IMAGE
+        c_x = self.surface.get_width() - c_img.get_width() - 40
+        c_y = self.surface.get_height() - c_img.get_height() - 40 + math.sin(self.timer / 200) * 7
+        self.surface.blit(Dialogue.CONTINUE_IMAGE, (c_x, c_y))
+
+        self.image = self.surface
