@@ -82,7 +82,7 @@ class Game:
 
         self.camera = Camera(self.display)
 
-        self.level = 2
+        self.level = 0
 
         self.cut_scene_manager = CutSceneManager(self.display)
         #story_cut_scene = StoryCutScene()

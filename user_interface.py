@@ -101,11 +101,12 @@ class Dialogue(Entity):
     IMAGE = pg.transform.scale(pg.image.load("images/dialogue.png"), (WIDTH // 1.5, 300))
     CONTINUE_IMAGE = pg.transform.scale(pg.image.load("images/continue.png"), (50, 50))
     FONT = pg.font.SysFont("joystixmonospaceregular", 50)
+    SOUND = pg.mixer.Sound("sfx/element_sound.wav")
 
     def __init__(self, text, pos, groups):
         super(Dialogue, self).__init__([Dialogue.IMAGE], pos, groups)
         self.surface = pg.Surface((Dialogue.IMAGE.get_width(), Dialogue.IMAGE.get_height()), pg.SRCALPHA)
-        self.rect.topleft = (WIDTH // 2 - Dialogue.IMAGE.get_width() // 2, HEIGHT - Dialogue.IMAGE.get_height())
+        self.rect.topleft = (WIDTH // 2 - Dialogue.IMAGE.get_width() // 2, HEIGHT - Dialogue.IMAGE.get_height() - 10)
         self.text = text
         self.text_index = 0
         self.element = 0
@@ -114,11 +115,17 @@ class Dialogue(Entity):
         self.timer = 0
         self.running = True
 
+        self.delta_element = 0
+
     def render_text(self, text):
         output = ""
+
+        if int(self.element) != self.delta_element:
+            Dialogue.SOUND.play()
+
         for element in range(int(self.element)):
             output += text[element]
-
+        self.delta_element = int(self.element)
         rendered_text = Dialogue.FONT.render(output, False, (0, 0, 0))
         self.surface.blit(rendered_text, (Dialogue.IMAGE.get_width() // 2 - rendered_text.get_width() // 2, self.surface.get_height() // 2 - rendered_text.get_height() // 2))
 
