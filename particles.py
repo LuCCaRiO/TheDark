@@ -72,6 +72,19 @@ class SlimeParticleSystem(ParticleSystem):
             self.particles.append(Particle(SlimeParticleSystem.PARTICLE, pos, 0.2, velocity))
 
 
+class GrimskullParticleSystem(ParticleSystem):
+    PARTICLE = pg.transform.scale(pg.image.load("images/particle1.png"), (9, 9))
+
+    def __init__(self, pos, size, groups, time, particles):
+        super(GrimskullParticleSystem, self).__init__(pos, size, groups, time, particles)
+
+    def start(self):
+        for index in range(self.total_particles):
+            pos = (self.image.get_width() // 2, self.image.get_height() // 2)
+            velocity = (random.uniform(-1, 1), random.uniform(-0.5, -3))
+            self.particles.append(Particle(GrimskullParticleSystem.PARTICLE, pos, 0.2, velocity))
+
+
 class Particle:
     def __init__(self, img, pos, gravity, velocity):
         self.image = img

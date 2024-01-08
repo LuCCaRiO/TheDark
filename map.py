@@ -71,7 +71,7 @@ class Map:
                         case "G":
                             Grimskull((j * TILE_SIZE, i * TILE_SIZE),
                                     [self.rendered_entities, self.dangerous_entities, self.interactable_entities],
-                                    self.collision)
+                                    self.collision, self.rendered_entities)
                         case "B":
                             LevelPortal((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.level_change_entities])
                         case "h":

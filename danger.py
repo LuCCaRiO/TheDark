@@ -3,7 +3,7 @@ import math
 import pygame as pg
 from entity import MoveableEntity
 from settings import *
-from particles import SlimeParticleSystem
+from particles import SlimeParticleSystem, GrimskullParticleSystem
 
 
 class Danger(MoveableEntity):
@@ -162,7 +162,7 @@ class Grimskull(Enemy):
     GRAVITY = 0.5
     KNOCKBACK = 80
 
-    def __init__(self, pos, groups, collidable_sprites):
+    def __init__(self, pos, groups, collidable_sprites, camera):
         super(Grimskull, self).__init__(Grimskull.IMAGES, pos, groups, Grimskull.DAMAGE)
         self.direction = pg.math.Vector2(0, 0)
         self.collidable_sprites = collidable_sprites
@@ -171,6 +171,7 @@ class Grimskull(Enemy):
         self.flip = False
         self.state = "normal"
         self.on_ground = False
+        self.camera = camera
 
     def instantiate_player(self, instance):
         self.player = instance
@@ -187,7 +188,7 @@ class Grimskull(Enemy):
         if self.direction.x > 0:
             self.flip = False
 
-    def detect_collision(self, direction):
+    def detect_ground(self, direction):
         for sprite in self.collidable_sprites["ground"]:
             if sprite.rect.colliderect(self.rect):
                 if direction == HORIZONTAL:
@@ -210,18 +211,24 @@ class Grimskull(Enemy):
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.top
 
-    def detect_ground(self):
+    def detect_collision(self):
         self.on_ground = False
         for sprite in self.collidable_sprites["ground"]:
             if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 9:
                 if sprite.rect.top == self.rect.bottom:
                     self.on_ground = True
 
+        for sprite in self.collidable_sprites["danger"]:
+            if sprite is not self:
+                if self.mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
+                    GrimskullParticleSystem((self.rect.centerx, self.rect.top), (50, 100), self.camera, 2, 5).start()
+                    self.kill()
+
     def move(self):
         self.pos.x += self.direction.x * Grimskull.SPEED * (self.delta_time / RELATION_DELTA_TIME)
         self.rect.x = round(self.pos.x)
 
-        self.detect_collision(HORIZONTAL)
+        self.detect_ground(HORIZONTAL)
 
         distance = self.player.rect.centerx - self.rect.centerx
         self.direction.x = 0 if distance == 0 else distance // abs(distance)
@@ -232,7 +239,7 @@ class Grimskull(Enemy):
         self.pos.y += self.direction.y * (self.delta_time / RELATION_DELTA_TIME)
         self.rect.y = round(self.pos.y)
 
-        self.detect_collision(VERTICAL)
+        self.detect_ground(VERTICAL)
 
     def gravity(self):
         self.direction.y += Grimskull.GRAVITY * (self.delta_time / RELATION_DELTA_TIME)
@@ -248,7 +255,7 @@ class Grimskull(Enemy):
         self.delta_time = delta_time
         self.gravity()
         self.move()
-        self.detect_ground()
+        self.detect_collision()
         if self.on_ground:
             self.state = "normal"
 

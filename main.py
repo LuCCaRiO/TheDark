@@ -51,7 +51,7 @@ class Game:
         
         void main() {
             // Define the size of each "pixel"
-            vec2 pixelSize = vec2(1.0 / 400.0); // Adjust the size to control pixelation
+            vec2 pixelSize = vec2(1 / 360.0); // Adjust the size to control pixelation
         
             // Calculate the texture coordinates for the current fragment
             vec2 coord = floor(uvs / pixelSize) * pixelSize + pixelSize * 0.5; // Adding half a pixel for centering
@@ -82,7 +82,7 @@ class Game:
 
         self.camera = Camera(self.display)
 
-        self.level = 0
+        self.level = 2
 
         self.cut_scene_manager = CutSceneManager(self.display)
         #story_cut_scene = StoryCutScene()
