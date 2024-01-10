@@ -23,7 +23,13 @@ class Player(MoveableEntity):
               "idle": [pg.image.load("images/BlackSprite/BlackSprite0.png")],
               "fall": [pg.image.load("images/BlackSprite/falling.png")],
               "heal": [pg.image.load("images/BlackSprite/BlackSprite2.png")],
-              "sleep": [pg.image.load("images/BlackSprite/player_sleeping.png")]}
+              "sleep": [pg.image.load("images/BlackSprite/player_sleeping.png")],
+              "dash": [pg.image.load("images/BlackSprite/dash.png")]}
+
+    ABILITIES = {"double_jump": True,
+                 "heal": True,
+                 "slowness": True,
+                 "dash": True}
 
     def __init__(self, pos, groups, collidable_sprites, map_instance):
         super(Player, self).__init__(Player.IMAGES["run"], pos, groups)
@@ -48,6 +54,15 @@ class Player(MoveableEntity):
 
         self.map_instance = map_instance
 
+        self.in_dash = False
+        self.dash_timer = 0
+
+    def dash(self):
+        if not self.in_dash and Player.ABILITIES["dash"] and self.magic > 0:
+            self.set_magic(self.magic - 34)
+            self.in_dash = True
+            self.dash_timer = 0
+
     def heal(self):
         hp = (self.delta_time / RELATION_DELTA_TIME) * 0.66
         if self.magic > 0 and self.health < 100:
@@ -64,7 +79,7 @@ class Player(MoveableEntity):
         if self.anm_index >= len(Player.IMAGES[self.animation_state]):
             self.anm_index = 0
 
-        if self.animation_state != "heal" and not self.on_ground:
+        if self.animation_state != "heal" and not self.on_ground and self.animation_state != "dash":
             self.animation_state = "fall"
             self.anm_index = 0
 
@@ -91,7 +106,7 @@ class Player(MoveableEntity):
             self.direction.x = 0
             self.animation_state = "idle"
 
-        if keys[pg.K_LALT] and self.on_ground and self.direction.x == 0:
+        if keys[pg.K_LALT] and self.on_ground and self.direction.x == 0 and Player.ABILITIES["heal"]:
             self.heal()
         else:
             Camera.instance.set_focus(False)
@@ -100,7 +115,7 @@ class Player(MoveableEntity):
         if self.allow_jump:
             if self.on_ground:
                 self.direction.y = Player.JUMP_FORCE
-            elif self.magic > 0:
+            elif self.magic > 0 and Player.ABILITIES["double_jump"]:
                 self.direction.y = Player.JUMP_FORCE
                 self.allow_jump = False
                 pos = self.rect.center + pg.math.Vector2(self.image.get_width() // -2, 0)
@@ -128,7 +143,8 @@ class Player(MoveableEntity):
             self.health = value
 
     def gravity(self):
-        self.direction.y += Player.GRAVITY * (self.delta_time / RELATION_DELTA_TIME)
+        if not self.in_dash:
+            self.direction.y += Player.GRAVITY * (self.delta_time / RELATION_DELTA_TIME)
 
     def move(self):
         self.pos.x += self.direction.x * Player.SPEED * (self.delta_time / RELATION_DELTA_TIME)
@@ -221,8 +237,19 @@ class Player(MoveableEntity):
             self.restart()
 
         self.delta_time = delta_time
+
+
         self.detect_ground()
         self.input()
+
+        if self.in_dash:
+            direction = -1 if self.flipped else 1
+            self.direction = pg.math.Vector2(5 * direction, 0)
+            self.dash_timer += delta_time
+            self.animation_state = "dash"
+            if self.dash_timer > SECOND * 0.12:
+                self.in_dash = False
+
         self.gravity()
         self.move()
         self.detect_collision()

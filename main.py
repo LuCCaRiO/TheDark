@@ -102,6 +102,7 @@ class Game:
         self.user_interface = pg.sprite.Group()
         self.create_ui()
 
+
     @staticmethod
     def surf_to_tex(ctx, surf):
         tex = ctx.texture(surf.get_size(), 4)
@@ -118,13 +119,13 @@ class Game:
 
             self.handle_events()
             if not self.cut_scene_manager.cut_scene_running:
+                self.ability_mode(delta_time)
+                delta_time *= self.time
+
                 if self.ability_on:
                     self.display.fill(ABILITY_COLOR)
                 else:
                     self.display.fill(NORMAL_COLOR)
-
-                self.ability_mode(delta_time)
-                delta_time *= self.time
 
                 if self.dialogue.running:
                     self.pause = True
@@ -161,7 +162,7 @@ class Game:
         self.load_level(f"levels/level_{self.level}.csv")
 
     def ability_mode(self, delta_time):
-        if self.map.player.magic <= 0:
+        if self.map.player.magic <= 0 or not self.map.player.ABILITIES["slowness"]:
             self.ability_on = False
             self.time = NORMAL_TIME
         elif self.ability_on:
@@ -173,15 +174,18 @@ class Game:
                 pg.quit()
                 sys.exit()
             elif event.type == pg.KEYDOWN:
-                if event.key == pg.K_SPACE:
-                    self.map.player.jump()
-                if event.key == pg.K_LSHIFT:
-                    if not self.ability_on:
-                        self.ability_on = True
-                        self.time = ABILITY_TIME
-                    else:
-                        self.ability_on = False
-                        self.time = NORMAL_TIME
+                match event.key:
+                    case pg.K_SPACE:
+                        self.map.player.jump()
+                    case pg.K_LSHIFT:
+                        if not self.ability_on:
+                            self.ability_on = True
+                            self.time = ABILITY_TIME
+                        else:
+                            self.ability_on = False
+                            self.time = NORMAL_TIME
+                    case pg.K_f:
+                        self.map.player.dash()
 
     def get_player(self):
         return self.map.player

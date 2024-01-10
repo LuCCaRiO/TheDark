@@ -79,6 +79,8 @@ class Map:
                         case "UK":
                             Entity([pg.image.load(f"images/boss/boss_test.png")],
                                  (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.static_entities])
+                        case "SCD":
+                            pass
 
     def update(self, delta_time, pause):
         for sprite in self.interactable_entities.sprites():
