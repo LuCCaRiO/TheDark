@@ -82,11 +82,11 @@ class Game:
 
         self.camera = Camera(self.display)
 
-        self.level = 2
+        self.level = 0
 
         self.cut_scene_manager = CutSceneManager(self.display)
-        #story_cut_scene = StoryCutScene()
-        #self.cut_scene_manager.start_cut_scene(story_cut_scene)
+        story_cut_scene = StoryCutScene()
+        self.cut_scene_manager.start_cut_scene(story_cut_scene)
 
         self.map = Map(f"levels/level_{self.level}.csv", self.camera)
 
@@ -184,7 +184,7 @@ class Game:
                         else:
                             self.ability_on = False
                             self.time = NORMAL_TIME
-                    case pg.K_f:
+                    case pg.K_w:
                         self.map.player.dash()
 
     def get_player(self):
