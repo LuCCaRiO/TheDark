@@ -1,5 +1,5 @@
 import pygame as pg
-from entity import MoveableEntity
+from entity import MoveableEntity, MagicDashScroll
 from particles import PlayerParticleSystem
 from camera import Camera
 from scene_loader import SceneLoader
@@ -17,6 +17,7 @@ class Player(MoveableEntity):
 
     DEATH_SFX = pg.mixer.Sound("sfx/explosion.wav")
     HURT_SFX = pg.mixer.Sound("sfx/hit01.wav")
+    JUMP_LANDING = pg.mixer.Sound("sfx/swash.wav")
 
     IMAGES = {"run": [pg.image.load("images/BlackSprite/BlackSprite0.png"),
                       pg.image.load("images/BlackSprite/BlackSprite1.png")],
@@ -29,12 +30,14 @@ class Player(MoveableEntity):
     ABILITIES = {"double_jump": True,
                  "heal": True,
                  "slowness": True,
-                 "dash": True}
+                 "dash": False}
 
-    def __init__(self, pos, groups, collidable_sprites, map_instance):
+    def __init__(self, pos, groups, collidable_sprites, map_instance, game_instance):
         super(Player, self).__init__(Player.IMAGES["run"], pos, groups)
         self.start_pos = pg.math.Vector2(pos)
         self.anm_index = 0
+
+        self.game_instance = game_instance
 
         self.direction = pg.math.Vector2()
         self.flipped = False
@@ -160,12 +163,16 @@ class Player(MoveableEntity):
         self.ground_collision(VERTICAL)
 
     def detect_ground(self):
+        was_on_ground = self.on_ground
         self.on_ground = False
         for sprite in self.collidable_sprites["ground"]:
             if abs(sprite.pos.x - self.pos.x) < TILE_SIZE - 9:
                 if sprite.rect.top == self.rect.bottom:
                     self.on_ground = True
                     self.allow_jump = True
+        if was_on_ground != self.on_ground and was_on_ground is False:
+            pass
+            #Player.JUMP_LANDING.play()
 
     def ground_collision(self, direction):
         for sprite in self.collidable_sprites["ground"]:
@@ -208,6 +215,16 @@ class Player(MoveableEntity):
         for sprite in self.collidable_sprites["level"]:
             if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
                 SceneLoader.instance.next_level()
+
+        for sprite in self.collidable_sprites["important"]:
+            if mask.overlap(sprite.mask, (sprite.rect.x - self.rect.x, sprite.rect.y - self.rect.y)):
+                if isinstance(sprite, MagicDashScroll):
+                    Player.ABILITIES["dash"] = True
+                    sprite.kill()
+                    self.set_magic(100)
+                    self.game_instance.create_dialogue(DASH_SCROLL_DIALOGUE)
+                    self.on_ground = False
+                    self.allow_jump = False
 
     def damage(self, damage):
         if damage >= self.health:

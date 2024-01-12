@@ -66,3 +66,19 @@ class LevelPortal(MoveableEntity):
         self.pos.x += math.sin(self.timer / SECOND * 5)
         self.pos.y += math.cos(self.timer / SECOND * 5)
         self.rect.midbottom = self.pos
+
+
+class MagicDashScroll(MoveableEntity):
+    IMAGE = pg.image.load("images/magic_scroll.png")
+
+    def __init__(self, pos, groups):
+        super(MagicDashScroll, self).__init__([MagicDashScroll.IMAGE], pos, groups, 4)
+        self.mask = pg.mask.from_surface(self.image)
+        self.pos.y -= 20
+        self.timer = 0
+
+    def update(self, delta_time):
+        self.delta_time = delta_time
+        self.timer += self.delta_time
+        self.pos.y -= (math.sin(self.timer / 300) * 0.8)
+        self.rect.y = round(self.pos.y)

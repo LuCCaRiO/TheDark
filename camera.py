@@ -30,8 +30,9 @@ class Camera(pg.sprite.Group):
         return self.target_offset
 
     def render(self, delta_time, player):
-        self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
-        self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
+        if player is not None:
+            self.target_offset.x = player.rect.centerx - pg.display.get_surface().get_width() // 2
+            self.target_offset.y = player.rect.centery - pg.display.get_surface().get_height() // 2
 
         factor = 0.1 * (delta_time / RELATION_DELTA_TIME)
 

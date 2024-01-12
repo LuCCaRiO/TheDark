@@ -13,3 +13,6 @@ RELATION_DELTA_TIME = 33
 
 HORIZONTAL = "horizontal"
 VERTICAL = "vertical"
+
+START_DIALOGUE = ["Where am I?", "Who am I?"]
+DASH_SCROLL_DIALOGUE = ["That's a technique", "to perform a dash..", "using the 'S' button"]

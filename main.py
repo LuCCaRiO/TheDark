@@ -82,13 +82,13 @@ class Game:
 
         self.camera = Camera(self.display)
 
-        self.level = 0
+        self.level = 1
 
         self.cut_scene_manager = CutSceneManager(self.display)
-        story_cut_scene = StoryCutScene()
-        self.cut_scene_manager.start_cut_scene(story_cut_scene)
+        #story_cut_scene = StoryCutScene()
+        #self.cut_scene_manager.start_cut_scene(story_cut_scene)
 
-        self.map = Map(f"levels/level_{self.level}.csv", self.camera)
+        self.map = Map(f"levels/level_{self.level}.csv", self.camera, self)
 
         self.health_bar = None
         self.magic_bar = None
@@ -154,8 +154,8 @@ class Game:
 
     def load_level(self, file):
         self.map.kill()
-        self.camera.offset = pg.math.Vector2(0, 0)
-        self.map = Map(file, self.camera)
+        self.camera.target_offset = pg.math.Vector2(0, 0)
+        self.map = Map(file, self.camera, self)
 
     def next_level(self):
         self.level += 1
@@ -167,6 +167,10 @@ class Game:
             self.time = NORMAL_TIME
         elif self.ability_on:
             self.map.player.set_magic(self.map.player.magic - (delta_time / RELATION_DELTA_TIME) * 0.15)
+
+    def create_dialogue(self, text):
+        self.pause = True
+        self.dialogue = Dialogue(text, (0, 0), self.user_interface)
 
     def handle_events(self):
         for event in pg.event.get():
@@ -184,7 +188,7 @@ class Game:
                         else:
                             self.ability_on = False
                             self.time = NORMAL_TIME
-                    case pg.K_w:
+                    case pg.K_s:
                         self.map.player.dash()
 
     def get_player(self):
@@ -193,11 +197,12 @@ class Game:
     def create_ui(self):
         self.health_bar = HealthBar((10, 10), [self.user_interface])
         self.magic_bar = MagicBar((10, 100), [self.user_interface])
-        self.dialogue = Dialogue(["Where am I?", "Who am I?"], (0, 0), [self.user_interface])
+        self.dialogue = Dialogue(START_DIALOGUE, (0, 0), [self.user_interface])
 
 
 if __name__ == "__main__":
     game = Game()
+    game_instance = game
 
     from scene_loader import SceneLoader
     SceneLoader(game)

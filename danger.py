@@ -101,6 +101,7 @@ class ShellSlime(Enemy):
         self.camera = camera
         self.moving = False
         self.image_copy = self.image
+        self.timer = 0
 
     def move(self):
         self.pos.x += self.direction.x * ShellSlime.SPEED * (self.delta_time / RELATION_DELTA_TIME)
@@ -127,9 +128,11 @@ class ShellSlime(Enemy):
             self.kill()
 
     def update(self, delta_time):
-        self.delta_time = delta_time
-        if (self.camera.get_target_offset().x + WIDTH) >= self.rect.left - TILE_SIZE:
+        if (self.camera.get_target_offset().x + WIDTH) >= self.rect.left - TILE_SIZE and self.timer != 0:
             self.moving = True
+        self.delta_time = delta_time
+        self.timer += self.delta_time
+        print(self.camera.get_target_offset().x)
         if self.moving:
             self.move()
             if self.dead:
