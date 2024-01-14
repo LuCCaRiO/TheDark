@@ -10,11 +10,14 @@ import array
 from settings import *
 from map import Map
 from user_interface import HealthBar, MagicBar, UI, Dialogue
+from entity import Text
 from camera import Camera
 from cutscene import CutSceneManager, StoryCutScene
 
 
 class Game:
+    FONT = pg.font.SysFont("joystixmonospaceregular", 50)
+
     def __init__(self):
         self.screen = pg.display.set_mode((WIDTH,
                                            HEIGHT), pg.FULLSCREEN | pg.OPENGL | pg.DOUBLEBUF)
@@ -82,13 +85,13 @@ class Game:
 
         self.camera = Camera(self.display)
 
-        self.level = 1
-
         self.cut_scene_manager = CutSceneManager(self.display)
-        #story_cut_scene = StoryCutScene()
-        #self.cut_scene_manager.start_cut_scene(story_cut_scene)
+        story_cut_scene = StoryCutScene()
+        self.cut_scene_manager.start_cut_scene(story_cut_scene)
 
-        self.map = Map(f"levels/level_{self.level}.csv", self.camera, self)
+        self.level = 0
+        self.map = None
+        self.load_level(f"levels/level_{self.level}.csv")
 
         self.health_bar = None
         self.magic_bar = None
@@ -153,9 +156,20 @@ class Game:
             frame_tex.release()
 
     def load_level(self, file):
-        self.map.kill()
-        self.camera.target_offset = pg.math.Vector2(0, 0)
+        if self.map is not None:
+            self.map.kill()
         self.map = Map(file, self.camera, self)
+
+        if self.level == 0:
+            font = pg.font.SysFont("joystixmonospaceregular", 50)
+            Text((1500, 400), self.camera, (255, 255, 255), font, "press space")
+
+            Text((2600, 150), self.camera, (255, 255, 255), font, "double jump by")
+            Text((2600, 200), self.camera, (255, 255, 255), font, "pressing space")
+
+            Text((5460, 50), self.camera, (255, 255, 255), font, "go to the")
+            Text((5450, 100), self.camera, (255, 255, 255), font, "next level")
+            Text((5630, 150), self.camera, (255, 255, 255), font, "↓")
 
     def next_level(self):
         self.level += 1
@@ -198,6 +212,9 @@ class Game:
         self.health_bar = HealthBar((10, 10), [self.user_interface])
         self.magic_bar = MagicBar((10, 100), [self.user_interface])
         self.dialogue = Dialogue(START_DIALOGUE, (0, 0), [self.user_interface])
+
+    def get_display(self):
+        return self.display
 
 
 if __name__ == "__main__":

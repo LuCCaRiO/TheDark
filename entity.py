@@ -82,3 +82,9 @@ class MagicDashScroll(MoveableEntity):
         self.timer += self.delta_time
         self.pos.y -= (math.sin(self.timer / 300) * 0.8)
         self.rect.y = round(self.pos.y)
+
+
+class Text(Entity):
+    def __init__(self, pos, groups, color, font, text):
+        rendered_text = font.render(text, False, color)
+        super(Text, self).__init__([rendered_text], pos, groups, 1)

@@ -9,7 +9,7 @@ from particles import ParticleSystem
 
 
 class Map:
-    def __init__(self, level, camera_sprites, game_instance):
+    def __init__(self, file, camera_sprites, game_instance):
         self.rendered_entities = camera_sprites
         self.dangerous_entities = pg.sprite.Group()
         self.static_entities = pg.sprite.Group()
@@ -27,9 +27,9 @@ class Map:
 
         self.player = None
 
-        self.level = level
+        self.file = file
 
-        self.create_level(self.read_csv(level))
+        self.create_level(self.read_csv(file))
 
     def kill(self):
         for sprite in self.rendered_entities.sprites():
@@ -38,7 +38,7 @@ class Map:
 
     def restart(self):
         self.kill()
-        self.create_level(self.read_csv(self.level))
+        self.game_instance.load_level(self.file)
 
     @staticmethod
     def read_csv(file_name):
@@ -53,6 +53,8 @@ class Map:
         from player import Player
         from entity import Tile, Magic, LevelPortal, Entity, MagicDashScroll
         from danger import Slime, Spike, Spiky, Grimskull, ShellSlime
+
+        self.rendered_entities.__init__(self.game_instance.get_display())
 
         for i, row in enumerate(level):
             for j, element in enumerate(row):
@@ -90,6 +92,6 @@ class Map:
         for sprite in self.interactable_entities.sprites():
             sprite.instantiate_player(self.player)
 
+        self.rendered_entities.render(delta_time, self.player)
         if not pause:
             self.rendered_entities.update(delta_time)
-        self.rendered_entities.render(delta_time, self.player)
