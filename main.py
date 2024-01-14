@@ -21,6 +21,8 @@ class Game:
     def __init__(self):
         self.screen = pg.display.set_mode((WIDTH,
                                            HEIGHT), pg.FULLSCREEN | pg.OPENGL | pg.DOUBLEBUF)
+        icon = pg.image.load("images/TheDarkIcon.png")
+        pg.display.set_icon(icon)
         self.display = pg.Surface((WIDTH,
                                    HEIGHT))
         self.ctx = moderngl.create_context()
