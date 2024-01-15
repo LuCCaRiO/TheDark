@@ -88,10 +88,10 @@ class Game:
         self.camera = Camera(self.display)
 
         self.cut_scene_manager = CutSceneManager(self.display)
-        #story_cut_scene = StoryCutScene()
-        #self.cut_scene_manager.start_cut_scene(story_cut_scene)
+        story_cut_scene = StoryCutScene()
+        self.cut_scene_manager.start_cut_scene(story_cut_scene)
 
-        self.level = 2
+        self.level = 0
         self.map = None
         self.load_level(f"levels/level_{self.level}.csv")
 
