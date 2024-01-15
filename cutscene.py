@@ -23,6 +23,41 @@ class CutScene:
         pass
 
 
+class EndOfCutScene(CutScene):
+    FONT = pg.font.SysFont('joystixmonospaceregular', 110)
+
+    def  __init__(self):
+        super(EndOfCutScene, self).__init__()
+        self.surface = pg.Surface((WIDTH, HEIGHT))
+        self.alpha = 0
+        self.text_image = pg.Surface((WIDTH, HEIGHT), pg.SRCALPHA)
+        text1 = EndOfCutScene.FONT.render("End of the", False, (255, 255, 255))
+        self.text_image.blit(text1, (WIDTH // 2 - text1.get_width() // 2, HEIGHT // 2 - text1.get_height() // 2 - 50))
+        text2 = EndOfCutScene.FONT.render("demonstration", False, (255, 255, 255))
+        self.text_image.blit(text2, (WIDTH // 2 - text2.get_width() // 2, HEIGHT // 2 - text2.get_height() // 2 + 50))
+        self.surface.blit(self.text_image, (WIDTH // 2 - self.text_image.get_width() // 2, HEIGHT // 2 - self.text_image.get_height() // 2))
+
+    def end(self):
+        pass
+
+    def get_surface(self):
+        return self.surface
+
+    def update(self, delta_time):
+        self.delta_time = delta_time
+        self.alpha += (self.delta_time / RELATION_DELTA_TIME) * 1.5
+
+        # Ensure alpha is between 0 and 255
+        self.alpha = max(0, min(255, self.alpha))
+
+        # Set the alpha value based on the updated self.alpha
+        self.text_image.set_alpha(self.alpha)
+
+        # Clear the surface and then redraw the text with the updated alpha
+        self.surface.fill((0, 0, 0, 0))
+        self.surface.blit(self.text_image, (0, 0))
+
+
 class StoryCutScene(CutScene):
     FONT = pg.font.SysFont('Verdana', 70)
     IMAGES = [pg.image.load("images/dark_night2.png"),

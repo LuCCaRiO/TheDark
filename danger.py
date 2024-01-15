@@ -7,8 +7,8 @@ from particles import SlimeParticleSystem, GrimskullParticleSystem
 
 
 class Danger(MoveableEntity):
-    def __init__(self, anm, pos, groups, damage):
-        super(Danger, self).__init__(anm, pos, groups)
+    def __init__(self, anm, pos, groups, damage, scale_multiply=TILE_SIZE/8):
+        super(Danger, self).__init__(anm, pos, groups, scale_multiply)
         self.mask = pg.mask.from_surface(self.image)
         self.damage = damage
 
@@ -17,8 +17,8 @@ class Danger(MoveableEntity):
 
 
 class Enemy(Danger):
-    def __init__(self, anm, pos, groups, damage):
-        super(Enemy, self).__init__(anm, pos, groups, damage)
+    def __init__(self, anm, pos, groups, damage, scale_multiply=TILE_SIZE/8):
+        super(Enemy, self).__init__(anm, pos, groups, damage, scale_multiply)
         self.health = 0
         self.set_health(100)
 
@@ -89,10 +89,10 @@ class ShellSlime(Enemy):
     DAMAGE = 50
     KNOCKBACK = 100
     SPEED = 18
-    DEATH_HEIGHT = 1200
+    DISAPPEARING_HEIGHT = 1200
 
-    def __init__(self, pos, groups, collidable_sprites, camera):
-        super(ShellSlime, self).__init__([ShellSlime.IMAGE], pos, groups, ShellSlime.DAMAGE)
+    def __init__(self, pos, groups, collidable_sprites, camera, scale_multiply=TILE_SIZE/8):
+        super(ShellSlime, self).__init__([ShellSlime.IMAGE], pos, groups, ShellSlime.DAMAGE, scale_multiply)
 
         self.direction = pg.math.Vector2(-1, 0)
         self.collidable_sprites = collidable_sprites
@@ -123,7 +123,7 @@ class ShellSlime(Enemy):
         self.angle += (self.delta_time / RELATION_DELTA_TIME) * 3
         self.image = pg.transform.rotate(self.image_copy, self.angle)
         self.direction.y += (self.delta_time / RELATION_DELTA_TIME)
-        if self.pos.y > ShellSlime.DEATH_HEIGHT:
+        if self.pos.y > ShellSlime.DISAPPEARING_HEIGHT:
             self.kill()
 
     def update(self, delta_time):

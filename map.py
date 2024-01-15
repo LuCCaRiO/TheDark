@@ -81,7 +81,7 @@ class Map:
                         case "B":
                             LevelPortal((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.level_change_entities])
                         case "h":
-                            ShellSlime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision, self.rendered_entities)
+                            ShellSlime((j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.dangerous_entities], self.collision, self.rendered_entities, 7.7)
                         case "UK":
                             Entity([pg.image.load(f"images/boss/boss_test.png")],
                                  (j * TILE_SIZE, i * TILE_SIZE), [self.rendered_entities, self.static_entities])

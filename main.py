@@ -12,7 +12,7 @@ from map import Map
 from user_interface import HealthBar, MagicBar, UI, Dialogue
 from entity import Text
 from camera import Camera
-from cutscene import CutSceneManager, StoryCutScene
+from cutscene import CutSceneManager, StoryCutScene, EndOfCutScene
 
 
 class Game:
@@ -88,10 +88,10 @@ class Game:
         self.camera = Camera(self.display)
 
         self.cut_scene_manager = CutSceneManager(self.display)
-        story_cut_scene = StoryCutScene()
-        self.cut_scene_manager.start_cut_scene(story_cut_scene)
+        #story_cut_scene = StoryCutScene()
+        #self.cut_scene_manager.start_cut_scene(story_cut_scene)
 
-        self.level = 0
+        self.level = 2
         self.map = None
         self.load_level(f"levels/level_{self.level}.csv")
 
@@ -160,7 +160,10 @@ class Game:
     def load_level(self, file):
         if self.map is not None:
             self.map.kill()
-        self.map = Map(file, self.camera, self)
+        if self.level <= 2:
+            self.map = Map(file, self.camera, self)
+        else:
+            self.cut_scene_manager.start_cut_scene(EndOfCutScene())
 
         if self.level == 0:
             font = pg.font.SysFont("joystixmonospaceregular", 50)
@@ -193,7 +196,7 @@ class Game:
             if event.type == pg.QUIT:
                 pg.quit()
                 sys.exit()
-            elif event.type == pg.KEYDOWN:
+            elif event.type == pg.KEYDOWN and self.map is not None:
                 match event.key:
                     case pg.K_SPACE:
                         self.map.player.jump()
